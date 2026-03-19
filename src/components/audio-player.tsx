@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
 import { Progress } from "./ui/progress";
@@ -16,126 +16,123 @@ import {
   ChevronUp,
   ChevronDown,
   DownloadCloud,
-  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAudioStore } from "@/stores/audio-store";
 
-interface AudioTrack {
-  id: string;
-  title: string;
-  titleAr: string;
-  duration: string;
-  durationSeconds: number;
-  hqUrl: string;
-  lqUrl: string;
-}
-
-interface AudioPlayerProps {
-  currentTrack?: AudioTrack;
-  audioQuality?: "lq" | "hq";
-  onQualityChange?: (quality: "lq" | "hq") => void;
-}
-
-const sampleTrack: AudioTrack = {
-  id: "sample-1",
-  title: "Hadith 1: Actions by Intentions",
-  titleAr: "الحَدِيثُ الأَوَّلُ: إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ",
-  duration: "00:53",
-  durationSeconds: 53,
-  hqUrl: "https://archive.org/download/40Hadith_Nawawi/01.%20Hadith%201%20-%20Niyyah%20(Intention)%20-%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20%D8%A8%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%AA%20-%20Al-Bukhari%20%231%20-%20Muslim%20%231907.mp3",
-  lqUrl: "https://archive.org/download/40Hadith_Nawawi/01.%20Hadith%201%20-%20Niyyah%20(Intention)%20-%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20%D8%A8%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%AA%20-%20Al-Bukhari%20%231%20-%20Muslim%20%231907.mp3",
-};
-
-export function AudioPlayer({
-  currentTrack = sampleTrack,
-  audioQuality = "lq",
-  onQualityChange,
-}: AudioPlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(currentTrack.durationSeconds);
-  const [volume, setVolume] = useState(80);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [quality, setQuality] = useState<"lq" | "hq">(audioQuality);
-  const [repeatMode, setRepeatMode] = useState<"none" | "one" | "all">("none");
+export function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  
+  // Get state from Zustand store
+  const {
+    currentTrack,
+    audioQuality,
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
+    isMuted,
+    repeatMode,
+    setAudioQuality,
+    setIsPlaying,
+    setCurrentTime,
+    setDuration,
+    setVolume,
+    toggleMute,
+    toggleRepeat,
+    getAudioUrl,
+  } = useAudioStore();
 
-  const audioUrl = quality === "lq" ? currentTrack.lqUrl : currentTrack.hqUrl;
+  // Get the active audio URL (LQ by default)
+  const audioUrl = getAudioUrl();
 
+  // Format time helper
   const formatTime = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return "00:00";
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handlePlayPause = () => {
-    if (audioRef.current) {
+  // Handle play/pause with browser auto-play policy handling
+  const handlePlayPause = useCallback(async () => {
+    if (!audioRef.current || !currentTrack) return;
+    
+    try {
       if (isPlaying) {
         audioRef.current.pause();
+        setIsPlaying(false);
       } else {
-        audioRef.current.play();
+        // Browser auto-play policy: must be triggered by user interaction
+        await audioRef.current.play();
+        setIsPlaying(true);
       }
-      setIsPlaying(!isPlaying);
+    } catch (error) {
+      console.error("Playback error:", error);
+      setIsPlaying(false);
     }
-  };
+  }, [isPlaying, currentTrack, setIsPlaying]);
 
-  const handleTimeUpdate = () => {
+  // Handle time update
+  const handleTimeUpdate = useCallback(() => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
     }
-  };
+  }, [setCurrentTime]);
 
-  const handleLoadedMetadata = () => {
+  // Handle loaded metadata
+  const handleLoadedMetadata = useCallback(() => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
     }
-  };
+  }, [setDuration]);
 
-  const handleTimeChange = (value: number[]) => {
-    setCurrentTime(value[0]);
+  // Handle seek
+  const handleTimeChange = useCallback((value: number[]) => {
+    const newTime = value[0];
+    setCurrentTime(newTime);
     if (audioRef.current) {
-      audioRef.current.currentTime = value[0];
+      audioRef.current.currentTime = newTime;
     }
-  };
+  }, [setCurrentTime]);
 
-  const handleVolumeChange = (value: number[]) => {
-    setVolume(value[0]);
-    setIsMuted(value[0] === 0);
+  // Handle volume change
+  const handleVolumeChange = useCallback((value: number[]) => {
+    const newVolume = value[0];
+    setVolume(newVolume);
     if (audioRef.current) {
-      audioRef.current.volume = value[0] / 100;
+      audioRef.current.volume = newVolume / 100;
     }
-  };
+  }, [setVolume]);
 
-  const toggleMute = () => {
-    if (isMuted) {
-      setIsMuted(false);
-      setVolume(volume === 0 ? 50 : volume);
-    } else {
-      setIsMuted(true);
+  // Handle toggle mute
+  const handleToggleMute = useCallback(() => {
+    toggleMute();
+    if (audioRef.current) {
+      if (!isMuted) {
+        audioRef.current.volume = 0;
+      } else {
+        audioRef.current.volume = (volume === 0 ? 50 : volume) / 100;
+      }
     }
-  };
+  }, [toggleMute, isMuted, volume]);
 
-  const toggleRepeat = () => {
-    const modes: ("none" | "one" | "all")[] = ["none", "one", "all"];
-    const currentIndex = modes.indexOf(repeatMode);
-    setRepeatMode(modes[(currentIndex + 1) % modes.length]);
-  };
+  // Handle quality toggle
+  const handleQualityToggle = useCallback(() => {
+    const newQuality = audioQuality === "lq" ? "hq" : "lq";
+    setAudioQuality(newQuality);
+    // Note: Changing quality will update audioUrl via getAudioUrl()
+  }, [audioQuality, setAudioQuality]);
 
-  const toggleQuality = () => {
-    const newQuality = quality === "lq" ? "hq" : "lq";
-    setQuality(newQuality);
-    onQualityChange?.(newQuality);
-  };
-
-  // Download function - Direct link method (instant browser download, no blob)
-  const handleDownload = () => {
-    // Always use LQ (low quality) as default for downloads
+  // Handle download - ALWAYS use LQ
+  const handleDownload = useCallback(() => {
+    if (!currentTrack) return;
+    
+    // ALWAYS use LQ (low quality) for downloads
     const url = currentTrack.lqUrl || currentTrack.hqUrl;
     const filename = `${currentTrack.titleAr}.mp3`;
     
-    // Create hidden anchor with download attribute
-    // This triggers browser's native download manager immediately
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
@@ -143,9 +140,68 @@ export function AudioPlayer({
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  };
+  }, [currentTrack]);
+
+  // Handle track ended
+  const handleEnded = useCallback(() => {
+    if (repeatMode === 'one' && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+    } else {
+      setIsPlaying(false);
+    }
+  }, [repeatMode, setIsPlaying]);
+
+  // Effect: Update audio source when track or quality changes
+  useEffect(() => {
+    if (audioRef.current && audioUrl) {
+      const wasPlaying = isPlaying;
+      
+      // Update source
+      audioRef.current.src = audioUrl;
+      
+      // If was playing, resume playback with new source
+      if (wasPlaying) {
+        audioRef.current.play().catch(console.error);
+      }
+    }
+  }, [audioUrl, currentTrack?.id]);
+
+  // Effect: Apply volume changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume / 100;
+    }
+  }, [volume, isMuted]);
+
+  // Auto-play when a new track is set
+  useEffect(() => {
+    if (audioRef.current && currentTrack && !isPlaying) {
+      // Small delay to ensure src is set
+      const timer = setTimeout(() => {
+        audioRef.current?.play()
+          .then(() => setIsPlaying(true))
+          .catch(() => setIsPlaying(false));
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [currentTrack?.id]);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  // No track selected - show placeholder
+  if (!currentTrack) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0f172a] to-[#1e293b] border-t border-[#334155] shadow-2xl z-40 h-24">
+        <div className="h-full px-4 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-[#64748b] arabic-text">اخْتَرْ مَقْطَعًا لِلِاسْتِمَاعِ</p>
+            <p className="text-xs text-[#475569] mt-1">Select a track to play</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -154,14 +210,14 @@ export function AudioPlayer({
         isExpanded ? "h-64" : "h-24"
       )}
     >
-      {/* Audio Element */}
+      {/* Audio Element - CRITICAL: preload="none" to prevent bandwidth drain */}
       <audio
         ref={audioRef}
-        src={audioUrl}
-        preload="metadata"
+        src={audioUrl || undefined}
+        preload="none"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={handleEnded}
       />
 
       {/* Progress Bar - Top */}
@@ -195,13 +251,13 @@ export function AudioPlayer({
             <Button
               variant="ghost"
               size="sm"
-              onClick={toggleQuality}
+              onClick={handleQualityToggle}
               className={cn(
                 "gap-1 arabic-text h-9 px-3 text-[#94a3b8] hover:text-white hover:bg-[#334155]",
-                quality === "hq" && "text-[#d4af37] hover:text-[#d4af37]"
+                audioQuality === "hq" && "text-[#d4af37] hover:text-[#d4af37]"
               )}
             >
-              {quality === "lq" ? "عادية" : "عالية"}
+              {audioQuality === "lq" ? "عادية" : "عالية"}
             </Button>
 
             <Button
@@ -246,7 +302,7 @@ export function AudioPlayer({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={toggleMute}
+                onClick={handleToggleMute}
                 className="text-[#94a3b8] hover:text-white hover:bg-[#334155]"
               >
                 {isMuted || volume === 0 ? (
@@ -300,7 +356,7 @@ export function AudioPlayer({
               </span>
               <Slider
                 value={[currentTime]}
-                max={duration}
+                max={duration || 100}
                 step={1}
                 className="flex-1"
                 onValueChange={handleTimeChange}
@@ -310,42 +366,20 @@ export function AudioPlayer({
               </span>
             </div>
 
-            {/* Playlist Preview */}
+            {/* Current Track Info */}
             <div className="bg-[#0f172a]/50 rounded-xl p-4">
               <h5 className="text-sm font-semibold arabic-text mb-3 text-[#d4af37] flex items-center gap-2">
                 <ListMusic className="h-4 w-4" />
                 قَائِمَةُ التَّشْغِيلِ
               </h5>
-              <div className="space-y-2 max-h-20 overflow-y-auto">
-                {[
-                  { title: "مُقَدِّمَةٌ فِي التَّوْحِيدِ", duration: "30:45", active: true },
-                  { title: "فَضَائِلُ التَّوْحِيدِ", duration: "45:30", active: false },
-                  { title: "شُرُوطُ لَا إِلَهَ إِلَّا اللَّهُ", duration: "28:15", active: false },
-                ].map((track, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors",
-                      track.active
-                        ? "bg-[#d4af37]/20 text-[#d4af37]"
-                        : "hover:bg-[#334155] text-[#94a3b8]"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      {track.active ? (
-                        <div className="w-6 h-6 rounded-full bg-[#d4af37] flex items-center justify-center">
-                          <Play className="h-3 w-3 text-[#0f172a]" />
-                        </div>
-                      ) : (
-                        <span className="w-6 h-6 flex items-center justify-center text-sm">
-                          {index + 1}
-                        </span>
-                      )}
-                      <span className="text-sm arabic-text">{track.title}</span>
-                    </div>
-                    <span className="text-xs font-mono">{track.duration}</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-[#d4af37]/20 text-[#d4af37]">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#d4af37] flex items-center justify-center">
+                    <Play className="h-3 w-3 text-[#0f172a]" />
                   </div>
-                ))}
+                  <span className="text-sm arabic-text truncate max-w-60">{currentTrack.titleAr}</span>
+                </div>
+                <span className="text-xs font-mono">{currentTrack.duration}</span>
               </div>
             </div>
           </div>
@@ -354,3 +388,6 @@ export function AudioPlayer({
     </div>
   );
 }
+
+// Import React for useState
+import React from "react";

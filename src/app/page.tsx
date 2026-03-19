@@ -27,6 +27,7 @@ import {
   Package,
 } from "lucide-react";
 import { mutoon, categories, getAllTracks, type Matn, type AudioTrack } from "@/data/mutoon";
+import { useAudioStore } from "@/stores/audio-store";
 
 // Icon mapping for categories
 const categoryIcons: Record<string, React.ElementType> = {
@@ -38,12 +39,14 @@ const categoryIcons: Record<string, React.ElementType> = {
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("library");
-  const [playingTrack, setPlayingTrack] = useState<AudioTrack | null>(null);
-  const [audioQuality, setAudioQuality] = useState<"lq" | "hq">("lq"); // Default: Low Quality
   const [downloadingAll, setDownloadingAll] = useState<string | null>(null);
+  
+  // Use global audio store
+  const { setTrack, audioQuality, setAudioQuality, currentTrack } = useAudioStore();
 
+  // Play track - updates global store which triggers AudioPlayer
   const handlePlayTrack = (track: AudioTrack) => {
-    setPlayingTrack(track);
+    setTrack(track);
   };
 
   // Download single track - Direct link method (no blob, instant browser download)
