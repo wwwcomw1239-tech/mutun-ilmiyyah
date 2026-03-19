@@ -12,6 +12,7 @@ import {
   Clock,
   User,
   Download,
+  DownloadCloud,
   Headphones,
   Layers,
   ChevronLeft,
@@ -300,10 +301,10 @@ export default function Home() {
                                       <Button
                                         size="sm"
                                         variant="ghost"
-                                        className="gap-1 arabic-text"
+                                        className="gap-1 arabic-text text-[#d4af37] hover:text-[#b8860b] hover:bg-[#d4af37]/10"
                                         onClick={() => handleDownloadTrack(track)}
                                       >
-                                        <Download className="h-4 w-4" />
+                                        <DownloadCloud className="h-4 w-4" />
                                         تَحْمِيل
                                       </Button>
                                     </div>
@@ -341,7 +342,7 @@ export default function Home() {
                           className="btn-gold gap-2"
                           onClick={() => handleDownloadTrack(matn.singleTrack!)}
                         >
-                          <Download className="h-4 w-4" />
+                          <DownloadCloud className="h-4 w-4" />
                           <span className="arabic-text">تَحْمِيل</span>
                         </Button>
                       </div>

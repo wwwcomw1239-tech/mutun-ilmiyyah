@@ -15,7 +15,7 @@ import {
   ListMusic,
   ChevronUp,
   ChevronDown,
-  Download,
+  DownloadCloud,
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -271,7 +271,7 @@ export function AudioPlayer({
               className="text-[#d4af37] hover:text-[#d4af37] hover:bg-[#d4af37]/10"
               onClick={handleDownload}
             >
-              <Download className="h-5 w-5" />
+              <DownloadCloud className="h-5 w-5" />
             </Button>
 
             {/* Expand Toggle */}
