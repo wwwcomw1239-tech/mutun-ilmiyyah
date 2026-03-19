@@ -10,116 +10,44 @@ import {
   CollapsibleTrigger,
 } from "./ui/collapsible";
 import {
-  BookOpen,
-  ChevronDown,
-  ChevronLeft,
+  Home,
+  Clock,
+  Bookmark,
+  TrendingUp,
   Heart,
-  Moon,
-  Star,
+  BookOpen,
   FileText,
   Languages,
+  Scale,
+  ChevronDown,
+  ChevronLeft,
   Volume2,
-  Home,
-  Bookmark,
-  Clock,
-  TrendingUp,
+  Star,
+  Library,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { categories, mutoon } from "@/data/mutoon";
 
 interface SidebarProps {
   onNavigate?: () => void;
 }
 
-interface CategoryItem {
-  id: string;
-  name: string;
-  nameEn: string;
-  count: number;
-  icon: React.ReactNode;
-  subcategories?: {
-    id: string;
-    name: string;
-    count: number;
-  }[];
-}
-
-const categories: CategoryItem[] = [
-  {
-    id: "aqeedah",
-    name: "العَقِيدَة",
-    nameEn: "Aqeedah",
-    count: 45,
-    icon: <Heart className="h-5 w-5" />,
-    subcategories: [
-      { id: "tawheed", name: "التَّوْحِيد", count: 15 },
-      { id: "imaan", name: "الإِيمَان", count: 12 },
-      { id: "nubuwwah", name: "النُّبُوَّة", count: 10 },
-      { id: "qadar", name: "القَدَر", count: 8 },
-    ],
-  },
-  {
-    id: "fiqh",
-    name: "الفِقْه",
-    nameEn: "Fiqh",
-    count: 68,
-    icon: <BookOpen className="h-5 w-5" />,
-    subcategories: [
-      { id: "taharah", name: "الطَّهَارَة", count: 12 },
-      { id: "salah", name: "الصَّلَاة", count: 18 },
-      { id: "zakah", name: "الزَّكَاة", count: 10 },
-      { id: "sawm", name: "الصِّيَام", count: 14 },
-      { id: "hajj", name: "الحَجّ", count: 14 },
-    ],
-  },
-  {
-    id: "hadith",
-    name: "الحَدِيث",
-    nameEn: "Hadith",
-    count: 32,
-    icon: <FileText className="h-5 w-5" />,
-    subcategories: [
-      { id: "mustalah", name: "المُصْطَلَح", count: 12 },
-      { id: "arbaeen", name: "الأَرْبَعُونَ", count: 10 },
-      { id: "bulugh", name: "بُلُوغ المَرَام", count: 10 },
-    ],
-  },
-  {
-    id: "arabic",
-    name: "اللُّغَة العَرَبِيَّة",
-    nameEn: "Arabic Language",
-    count: 28,
-    icon: <Languages className="h-5 w-5" />,
-    subcategories: [
-      { id: "nahw", name: "النَّحْو", count: 12 },
-      { id: "sarf", name: "الصَّرْف", count: 8 },
-      { id: "balaghah", name: "البَلَاغَة", count: 8 },
-    ],
-  },
-  {
-    id: "seerah",
-    name: "السِّيرَة",
-    nameEn: "Seerah",
-    count: 18,
-    icon: <Moon className="h-5 w-5" />,
-  },
-  {
-    id: "tafsir",
-    name: "التَّفْسِير",
-    nameEn: "Tafsir",
-    count: 22,
-    icon: <Star className="h-5 w-5" />,
-  },
-];
+const categoryIcons: Record<string, React.ElementType> = {
+  aqeedah: Heart,
+  hadith: BookOpen,
+  arabic: Languages,
+  fiqh: Scale,
+};
 
 const quickLinks = [
-  { id: "home", name: "الرئيسية", icon: <Home className="h-4 w-4" /> },
-  { id: "recent", name: "المستمع مؤخراً", icon: <Clock className="h-4 w-4" /> },
-  { id: "saved", name: "المحفوظات", icon: <Bookmark className="h-4 w-4" /> },
-  { id: "popular", name: "الأكثر استماعاً", icon: <TrendingUp className="h-4 w-4" /> },
+  { id: "home", name: "الرئيسية", icon: Home },
+  { id: "recent", name: "المستمع مؤخراً", icon: Clock },
+  { id: "saved", name: "المحفوظات", icon: Bookmark },
+  { id: "popular", name: "الأكثر استماعاً", icon: TrendingUp },
 ];
 
 export function Sidebar({ onNavigate }: SidebarProps) {
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(["aqeedah", "fiqh"]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(["aqeedah", "hadith"]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const toggleCategory = (categoryId: string) => {
@@ -135,136 +63,153 @@ export function Sidebar({ onNavigate }: SidebarProps) {
     onNavigate?.();
   };
 
+  // Calculate totals
+  const totalTracks = mutoon.reduce((acc, m) => {
+    if (m.hasChapters && m.chapters) {
+      return acc + m.chapters.reduce((cAcc, c) => cAcc + c.tracks.length, 0);
+    }
+    return acc + 1;
+  }, 0);
+
+  const totalChapters = mutoon.reduce((acc, m) => acc + m.totalChapters, 0);
+
   return (
-    <div className="h-full flex flex-col bg-sidebar">
+    <div className="h-full flex flex-col bg-white dark:bg-[#1e293b] border-l border-[#e2e8f0] dark:border-[#334155]">
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-6">
           {/* Quick Links Section */}
           <div className="space-y-2">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+            <h3 className="text-xs font-semibold text-[#64748b] uppercase tracking-wider px-2 arabic-text">
               روابط سريعة
             </h3>
             <nav className="space-y-1">
-              {quickLinks.map((link) => (
-                <Button
-                  key={link.id}
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start gap-3 text-right arabic-text",
-                    activeCategory === link.id && "bg-accent text-accent-foreground"
-                  )}
-                  onClick={() => handleCategoryClick(link.id)}
-                >
-                  {link.icon}
-                  <span>{link.name}</span>
-                </Button>
-              ))}
+              {quickLinks.map((link) => {
+                const IconComponent = link.icon;
+                return (
+                  <Button
+                    key={link.id}
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start gap-3 text-right arabic-text",
+                      activeCategory === link.id
+                        ? "bg-[#fef3c7] dark:bg-[#d4af37]/20 text-[#92400e] dark:text-[#d4af37]"
+                        : "text-[#475569] dark:text-[#94a3b8] hover:bg-[#f1f5f9] dark:hover:bg-[#334155] hover:text-[#0f172a] dark:hover:text-white"
+                    )}
+                    onClick={() => handleCategoryClick(link.id)}
+                  >
+                    <IconComponent className="h-4 w-4" />
+                    <span>{link.name}</span>
+                  </Button>
+                );
+              })}
             </nav>
           </div>
 
-          <Separator />
+          <Separator className="bg-[#e2e8f0] dark:bg-[#334155]" />
 
           {/* Categories Section */}
           <div className="space-y-2">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+            <h3 className="text-xs font-semibold text-[#64748b] uppercase tracking-wider px-2 arabic-text">
               الأقسام
             </h3>
             <nav className="space-y-1">
-              {categories.map((category) => (
-                <Collapsible
-                  key={category.id}
-                  open={expandedCategories.includes(category.id)}
-                  onOpenChange={() => toggleCategory(category.id)}
-                >
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-between text-right arabic-text",
-                        activeCategory === category.id && "bg-accent text-accent-foreground"
-                      )}
-                      onClick={() => handleCategoryClick(category.id)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-primary">{category.icon}</span>
-                        <div className="flex flex-col items-start">
-                          <span className="font-medium">{category.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {category.nameEn}
+              {categories.map((category) => {
+                const IconComponent = categoryIcons[category.id] || FileText;
+                const categoryMutoon = mutoon.filter(m => m.categoryId === category.id);
+
+                return (
+                  <Collapsible
+                    key={category.id}
+                    open={expandedCategories.includes(category.id)}
+                    onOpenChange={() => toggleCategory(category.id)}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className={cn(
+                          "w-full justify-between text-right arabic-text",
+                          activeCategory === category.id
+                            ? "bg-[#fef3c7] dark:bg-[#d4af37]/20 text-[#92400e] dark:text-[#d4af37]"
+                            : "text-[#475569] dark:text-[#94a3b8] hover:bg-[#f1f5f9] dark:hover:bg-[#334155] hover:text-[#0f172a] dark:hover:text-white"
+                        )}
+                        onClick={() => handleCategoryClick(category.id)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-[#d4af37]">
+                            <IconComponent className="h-5 w-5" />
                           </span>
+                          <div className="flex flex-col items-start">
+                            <span className="font-medium">{category.nameAr}</span>
+                            <span className="text-xs text-[#64748b]">{category.name}</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                          {category.count}
-                        </span>
-                        {category.subcategories && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs bg-[#f1f5f9] dark:bg-[#334155] text-[#64748b] px-2 py-0.5 rounded-full">
+                            {categoryMutoon.length}
+                          </span>
                           <ChevronDown
                             className={cn(
                               "h-4 w-4 transition-transform duration-200",
                               expandedCategories.includes(category.id) && "rotate-180"
                             )}
                           />
-                        )}
-                      </div>
-                    </Button>
-                  </CollapsibleTrigger>
-                  {category.subcategories && (
-                    <CollapsibleContent>
-                      <div className="mr-4 mt-1 space-y-1 border-r-2 border-border pr-3">
-                        {category.subcategories.map((sub) => (
-                          <Button
-                            key={sub.id}
-                            variant="ghost"
-                            size="sm"
-                            className="w-full justify-between text-right arabic-text"
-                            onClick={() => onNavigate?.()}
-                          >
-                            <span className="flex items-center gap-2">
-                              <ChevronLeft className="h-3 w-3 text-muted-foreground" />
-                              {sub.name}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {sub.count}
-                            </span>
-                          </Button>
-                        ))}
-                      </div>
-                    </CollapsibleContent>
-                  )}
-                </Collapsible>
-              ))}
+                        </div>
+                      </Button>
+                    </CollapsibleTrigger>
+                    {categoryMutoon.length > 0 && (
+                      <CollapsibleContent>
+                        <div className="mr-4 mt-1 space-y-1 border-r-2 border-[#d4af37]/30 pr-3">
+                          {categoryMutoon.map((matn) => (
+                            <Button
+                              key={matn.id}
+                              variant="ghost"
+                              size="sm"
+                              className="w-full justify-between text-right arabic-text text-[#475569] dark:text-[#94a3b8] hover:bg-[#f1f5f9] dark:hover:bg-[#334155]"
+                              onClick={() => onNavigate?.()}
+                            >
+                              <span className="flex items-center gap-2">
+                                <ChevronLeft className="h-3 w-3 text-[#d4af37]" />
+                                <span className="truncate max-w-40">{matn.titleAr}</span>
+                              </span>
+                            </Button>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
+                    )}
+                  </Collapsible>
+                );
+              })}
             </nav>
           </div>
 
-          <Separator />
+          <Separator className="bg-[#e2e8f0] dark:bg-[#334155]" />
 
           {/* Audio Statistics */}
           <div className="space-y-2">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+            <h3 className="text-xs font-semibold text-[#64748b] uppercase tracking-wider px-2 arabic-text">
               إحصائيات
             </h3>
-            <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+            <div className="bg-[#f8fafc] dark:bg-[#0f172a]/50 rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Volume2 className="h-4 w-4 text-primary" />
-                  <span className="text-sm arabic-text">التسجيلات</span>
+                  <Volume2 className="h-4 w-4 text-[#d4af37]" />
+                  <span className="text-sm arabic-text text-[#475569] dark:text-[#94a3b8]">التسجيلات</span>
                 </div>
-                <span className="text-sm font-bold">213</span>
+                <span className="text-sm font-bold text-[#0f172a] dark:text-white">{totalTracks}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <BookOpen className="h-4 w-4 text-primary" />
-                  <span className="text-sm arabic-text">المتون</span>
+                  <Library className="h-4 w-4 text-[#d4af37]" />
+                  <span className="text-sm arabic-text text-[#475569] dark:text-[#94a3b8]">المتون</span>
                 </div>
-                <span className="text-sm font-bold">48</span>
+                <span className="text-sm font-bold text-[#0f172a] dark:text-white">{mutoon.length}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-primary" />
-                  <span className="text-sm arabic-text">الشيوخ</span>
+                  <Star className="h-4 w-4 text-[#d4af37]" />
+                  <span className="text-sm arabic-text text-[#475569] dark:text-[#94a3b8]">الأبواب</span>
                 </div>
-                <span className="text-sm font-bold">12</span>
+                <span className="text-sm font-bold text-[#0f172a] dark:text-white">{totalChapters}</span>
               </div>
             </div>
           </div>

@@ -12,41 +12,56 @@ import {
   Volume2,
   VolumeX,
   Repeat,
-  List,
+  ListMusic,
   ChevronUp,
   ChevronDown,
-  X,
-  Maximize2,
+  Download,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AudioTrack {
   id: string;
   title: string;
-  author: string;
-  category: string;
-  duration: number; // in seconds
-  audioUrl: string;
+  titleAr: string;
+  duration: string;
+  durationSeconds: number;
+  hqUrl: string;
+  lqUrl: string;
+}
+
+interface AudioPlayerProps {
+  currentTrack?: AudioTrack;
+  audioQuality?: "lq" | "hq";
+  onQualityChange?: (quality: "lq" | "hq") => void;
 }
 
 const sampleTrack: AudioTrack = {
-  id: "1",
-  title: "كِتَابُ التَّوْحِيد",
-  author: "الشَّيْخُ مُحَمَّدُ بْنُ عَبْدِ الوَهَّابِ",
-  category: "العَقِيدَة",
-  duration: 1847, // ~30 minutes
-  audioUrl: "/audio/sample.mp3",
+  id: "sample-1",
+  title: "Introduction to Tawhid",
+  titleAr: "مُقَدِّمَةٌ فِي التَّوْحِيدِ",
+  duration: "30:45",
+  durationSeconds: 1847,
+  hqUrl: "https://ia800300.us.archive.org/20/items/KitaabAtTawhid_SheikhSalihAlFawzan/01.mp3",
+  lqUrl: "https://ia800300.us.archive.org/20/items/KitaabAtTawhid_SheikhSalihAlFawzan/01.mp3",
 };
 
-export function AudioPlayer() {
+export function AudioPlayer({
+  currentTrack = sampleTrack,
+  audioQuality = "lq",
+  onQualityChange,
+}: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(sampleTrack.duration);
+  const [duration, setDuration] = useState(currentTrack.durationSeconds);
   const [volume, setVolume] = useState(80);
   const [isMuted, setIsMuted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [quality, setQuality] = useState<"lq" | "hq">(audioQuality);
   const [repeatMode, setRepeatMode] = useState<"none" | "one" | "all">("none");
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const audioUrl = quality === "lq" ? currentTrack.lqUrl : currentTrack.hqUrl;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -55,7 +70,26 @@ export function AudioPlayer() {
   };
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
   };
 
   const handleTimeChange = (value: number[]) => {
@@ -88,95 +122,116 @@ export function AudioPlayer() {
     setRepeatMode(modes[(currentIndex + 1) % modes.length]);
   };
 
+  const toggleQuality = () => {
+    const newQuality = quality === "lq" ? "hq" : "lq";
+    setQuality(newQuality);
+    onQualityChange?.(newQuality);
+  };
+
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div
       className={cn(
-        "fixed bottom-0 left-0 right-0 bg-sidebar border-t border-border shadow-lg z-40 transition-all duration-300",
-        isExpanded ? "h-48" : "h-20"
+        "fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0f172a] to-[#1e293b] border-t border-[#334155] shadow-2xl z-40 transition-all duration-300",
+        isExpanded ? "h-64" : "h-24"
       )}
     >
       {/* Audio Element */}
-      <audio ref={audioRef} src={sampleTrack.audioUrl} preload="metadata" />
+      <audio
+        ref={audioRef}
+        src={audioUrl}
+        preload="metadata"
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => setIsPlaying(false)}
+      />
 
       {/* Progress Bar - Top */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-muted">
-        <Progress value={progress} className="h-1 rounded-none" />
+      <div className="absolute top-0 left-0 right-0 h-1 bg-[#334155]">
+        <Progress value={progress} className="h-1 rounded-none bg-[#334155]" />
       </div>
 
       <div className="h-full px-4 flex flex-col justify-center">
         {/* Main Player Bar */}
         <div className="flex items-center justify-between gap-4">
           {/* Track Info - Right */}
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <span className="text-primary text-xl arabic-title">ت</span>
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#d4af37] to-[#b8860b] flex items-center justify-center flex-shrink-0">
+              <span className="text-[#0f172a] text-xl font-bold">م</span>
             </div>
             <div className="min-w-0">
-              <h4 className="font-semibold arabic-text truncate text-foreground">
-                {sampleTrack.title}
+              <h4 className="font-semibold arabic-text truncate text-white text-lg">
+                {currentTrack.titleAr}
               </h4>
-              <p className="text-sm text-muted-foreground arabic-text truncate">
-                {sampleTrack.author}
-              </p>
+              <div className="flex items-center gap-3 text-sm text-[#94a3b8]">
+                <span className="arabic-text font-mono">{formatTime(currentTime)}</span>
+                <span>/</span>
+                <span className="arabic-text font-mono">{formatTime(duration)}</span>
+              </div>
             </div>
-            <span className="hidden sm:inline-flex text-xs bg-primary/10 text-primary px-2 py-1 rounded-full arabic-text">
-              {sampleTrack.category}
-            </span>
           </div>
 
           {/* Controls - Center */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            {/* Quality Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleQuality}
+              className={cn(
+                "gap-1 arabic-text h-9 px-3 text-[#94a3b8] hover:text-white hover:bg-[#334155]",
+                quality === "hq" && "text-[#d4af37] hover:text-[#d4af37]"
+              )}
+            >
+              {quality === "lq" ? "عادية" : "عالية"}
+            </Button>
+
             <Button
               variant="ghost"
               size="icon"
-              className="hidden sm:flex"
+              className="hidden sm:flex text-[#94a3b8] hover:text-white hover:bg-[#334155]"
               onClick={toggleRepeat}
             >
               <Repeat
                 className={cn(
                   "h-4 w-4",
-                  repeatMode !== "none" && "text-primary"
+                  repeatMode !== "none" && "text-[#d4af37]"
                 )}
               />
-              {repeatMode === "one" && (
-                <span className="absolute text-[8px] font-bold text-primary">1</span>
-              )}
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="text-[#94a3b8] hover:text-white hover:bg-[#334155]">
               <SkipBack className="h-5 w-5" />
             </Button>
             <Button
               size="icon"
-              className="h-12 w-12 rounded-full bg-primary hover:bg-primary/90"
+              className="h-14 w-14 rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8860b] hover:from-[#b8860b] hover:to-[#d4af37] shadow-lg"
               onClick={handlePlayPause}
             >
               {isPlaying ? (
-                <Pause className="h-5 w-5 text-primary-foreground" />
+                <Pause className="h-6 w-6 text-[#0f172a]" />
               ) : (
-                <Play className="h-5 w-5 text-primary-foreground mr-[-2px]" />
+                <Play className="h-6 w-6 text-[#0f172a] ml-[-2px]" />
               )}
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="text-[#94a3b8] hover:text-white hover:bg-[#334155]">
               <SkipForward className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="hidden sm:flex">
-              <List className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="hidden sm:flex text-[#94a3b8] hover:text-white hover:bg-[#334155]">
+              <ListMusic className="h-4 w-4" />
             </Button>
           </div>
 
-          {/* Time & Volume - Left */}
+          {/* Volume & Actions - Left */}
           <div className="flex items-center gap-4 flex-1 justify-end">
-            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="arabic-text font-mono">{formatTime(currentTime)}</span>
-              <span>/</span>
-              <span className="arabic-text font-mono">{formatTime(duration)}</span>
-            </div>
-
             {/* Volume Control */}
             <div className="hidden md:flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={toggleMute}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMute}
+                className="text-[#94a3b8] hover:text-white hover:bg-[#334155]"
+              >
                 {isMuted || volume === 0 ? (
                   <VolumeX className="h-4 w-4" />
                 ) : (
@@ -192,16 +247,27 @@ export function AudioPlayer() {
               />
             </div>
 
+            {/* Download Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-[#d4af37] hover:text-[#d4af37] hover:bg-[#d4af37]/10"
+              onClick={() => window.open(audioUrl, "_blank")}
+            >
+              <Download className="h-5 w-5" />
+            </Button>
+
             {/* Expand Toggle */}
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsExpanded(!isExpanded)}
+              className="text-[#94a3b8] hover:text-white hover:bg-[#334155]"
             >
               {isExpanded ? (
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="h-5 w-5" />
               ) : (
-                <ChevronUp className="h-4 w-4" />
+                <ChevronUp className="h-5 w-5" />
               )}
             </Button>
           </div>
@@ -209,10 +275,10 @@ export function AudioPlayer() {
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-4 space-y-4">
-            {/* Seek Bar */}
+          <div className="mt-6 space-y-4">
+            {/* Full Seek Bar */}
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground font-mono w-12 text-right">
+              <span className="text-sm text-[#94a3b8] font-mono w-16 text-right">
                 {formatTime(currentTime)}
               </span>
               <Slider
@@ -222,35 +288,45 @@ export function AudioPlayer() {
                 className="flex-1"
                 onValueChange={handleTimeChange}
               />
-              <span className="text-sm text-muted-foreground font-mono w-12">
+              <span className="text-sm text-[#94a3b8] font-mono w-16">
                 {formatTime(duration)}
               </span>
             </div>
 
             {/* Playlist Preview */}
-            <div className="bg-muted/30 rounded-lg p-3">
-              <h5 className="text-sm font-semibold arabic-text mb-2">
-                قائمة التشغيل
+            <div className="bg-[#0f172a]/50 rounded-xl p-4">
+              <h5 className="text-sm font-semibold arabic-text mb-3 text-[#d4af37] flex items-center gap-2">
+                <ListMusic className="h-4 w-4" />
+                قَائِمَةُ التَّشْغِيلِ
               </h5>
-              <div className="space-y-2 max-h-24 overflow-y-auto">
+              <div className="space-y-2 max-h-20 overflow-y-auto">
                 {[
-                  { title: "مُقَدِّمَةٌ فِي التَّوْحِيد", duration: "12:45" },
-                  { title: "بَابُ حُكْمِ تَرْكِ الصَّلَاةِ", duration: "18:30" },
-                  { title: "بَابُ مَا جَاءَ فِي السِّحْرِ", duration: "25:15" },
+                  { title: "مُقَدِّمَةٌ فِي التَّوْحِيدِ", duration: "30:45", active: true },
+                  { title: "فَضَائِلُ التَّوْحِيدِ", duration: "45:30", active: false },
+                  { title: "شُرُوطُ لَا إِلَهَ إِلَّا اللَّهُ", duration: "28:15", active: false },
                 ].map((track, index) => (
                   <div
                     key={index}
                     className={cn(
-                      "flex items-center justify-between p-2 rounded cursor-pointer transition-colors",
-                      index === 0
-                        ? "bg-primary/10 text-primary"
-                        : "hover:bg-muted"
+                      "flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors",
+                      track.active
+                        ? "bg-[#d4af37]/20 text-[#d4af37]"
+                        : "hover:bg-[#334155] text-[#94a3b8]"
                     )}
                   >
-                    <span className="text-sm arabic-text">{track.title}</span>
-                    <span className="text-xs text-muted-foreground font-mono">
-                      {track.duration}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      {track.active ? (
+                        <div className="w-6 h-6 rounded-full bg-[#d4af37] flex items-center justify-center">
+                          <Play className="h-3 w-3 text-[#0f172a]" />
+                        </div>
+                      ) : (
+                        <span className="w-6 h-6 flex items-center justify-center text-sm">
+                          {index + 1}
+                        </span>
+                      )}
+                      <span className="text-sm arabic-text">{track.title}</span>
+                    </div>
+                    <span className="text-xs font-mono">{track.duration}</span>
                   </div>
                 ))}
               </div>
