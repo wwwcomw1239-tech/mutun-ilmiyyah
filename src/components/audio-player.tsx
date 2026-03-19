@@ -38,12 +38,12 @@ interface AudioPlayerProps {
 
 const sampleTrack: AudioTrack = {
   id: "sample-1",
-  title: "Introduction to Tawhid",
-  titleAr: "مُقَدِّمَةٌ فِي التَّوْحِيدِ",
-  duration: "30:45",
-  durationSeconds: 1847,
-  hqUrl: "https://ia800300.us.archive.org/20/items/KitaabAtTawhid_SheikhSalihAlFawzan/01.mp3",
-  lqUrl: "https://ia800300.us.archive.org/20/items/KitaabAtTawhid_SheikhSalihAlFawzan/01.mp3",
+  title: "Hadith 1: Actions by Intentions",
+  titleAr: "الحَدِيثُ الأَوَّلُ: إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ",
+  duration: "00:53",
+  durationSeconds: 53,
+  hqUrl: "https://archive.org/download/40Hadith_Nawawi/01.%20Hadith%201%20-%20Niyyah%20(Intention)%20-%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20%D8%A8%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%AA%20-%20Al-Bukhari%20%231%20-%20Muslim%20%231907.mp3",
+  lqUrl: "https://archive.org/download/40Hadith_Nawawi/01.%20Hadith%201%20-%20Niyyah%20(Intention)%20-%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20%D8%A8%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%AA%20-%20Al-Bukhari%20%231%20-%20Muslim%20%231907.mp3",
 };
 
 export function AudioPlayer({
@@ -126,6 +126,30 @@ export function AudioPlayer({
     const newQuality = quality === "lq" ? "hq" : "lq";
     setQuality(newQuality);
     onQualityChange?.(newQuality);
+  };
+
+  // Download function with proper filename handling
+  const handleDownload = async () => {
+    const url = quality === "lq" ? currentTrack.lqUrl : currentTrack.hqUrl;
+    const filename = `${currentTrack.titleAr}.mp3`;
+    
+    try {
+      // Try to fetch and create blob for download
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      // Fallback: open in new tab
+      window.open(url, '_blank');
+    }
   };
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -252,7 +276,7 @@ export function AudioPlayer({
               variant="ghost"
               size="icon"
               className="text-[#d4af37] hover:text-[#d4af37] hover:bg-[#d4af37]/10"
-              onClick={() => window.open(audioUrl, "_blank")}
+              onClick={handleDownload}
             >
               <Download className="h-5 w-5" />
             </Button>

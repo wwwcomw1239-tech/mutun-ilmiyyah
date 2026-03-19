@@ -41,8 +41,36 @@ export default function Home() {
   const [audioQuality, setAudioQuality] = useState<"lq" | "hq">("lq");
   const [downloadingAll, setDownloadingAll] = useState<string | null>(null);
 
+  // Get current quality preference for downloads
+  const getQualityUrl = (track: AudioTrack) => {
+    return audioQuality === "lq" ? track.lqUrl : track.hqUrl;
+  };
+
   const handlePlayTrack = (track: AudioTrack) => {
     setPlayingTrack(track);
+  };
+
+  // Download single track with proper filename
+  const handleDownloadTrack = async (track: AudioTrack) => {
+    const url = getQualityUrl(track);
+    const filename = `${track.titleAr}.mp3`;
+    
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+      
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(downloadUrl);
+    } catch {
+      // Fallback: open in new tab
+      window.open(url, "_blank");
+    }
   };
 
   const handleDownloadAll = async (matn: Matn) => {
@@ -51,17 +79,21 @@ export default function Home() {
     
     for (const track of tracks) {
       const url = audioQuality === "lq" ? track.lqUrl : track.hqUrl;
+      const filename = `${track.titleAr}.mp3`;
+      
       try {
         const response = await fetch(url);
         const blob = await response.blob();
         const downloadUrl = URL.createObjectURL(blob);
+        
         const a = document.createElement("a");
         a.href = downloadUrl;
-        a.download = `${track.titleAr}.mp3`;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(downloadUrl);
+        
         await new Promise(resolve => setTimeout(resolve, 500));
       } catch (error) {
         console.error("Download failed:", error);
@@ -282,10 +314,7 @@ export default function Home() {
                                         size="sm"
                                         variant="ghost"
                                         className="gap-1 arabic-text"
-                                        onClick={() => {
-                                          const url = audioQuality === "lq" ? track.lqUrl : track.hqUrl;
-                                          window.open(url, "_blank");
-                                        }}
+                                        onClick={() => handleDownloadTrack(track)}
                                       >
                                         <Download className="h-4 w-4" />
                                         تَحْمِيل
@@ -323,10 +352,7 @@ export default function Home() {
                         </div>
                         <Button
                           className="btn-gold gap-2"
-                          onClick={() => {
-                            const url = audioQuality === "lq" ? matn.singleTrack!.lqUrl : matn.singleTrack!.hqUrl;
-                            window.open(url, "_blank");
-                          }}
+                          onClick={() => handleDownloadTrack(matn.singleTrack!)}
                         >
                           <Download className="h-4 w-4" />
                           <span className="arabic-text">تَحْمِيل</span>
