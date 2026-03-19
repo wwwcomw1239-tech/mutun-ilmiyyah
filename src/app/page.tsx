@@ -38,69 +38,56 @@ const categoryIcons: Record<string, React.ElementType> = {
 export default function Home() {
   const [activeTab, setActiveTab] = useState("library");
   const [playingTrack, setPlayingTrack] = useState<AudioTrack | null>(null);
-  const [audioQuality, setAudioQuality] = useState<"lq" | "hq">("lq");
+  const [audioQuality, setAudioQuality] = useState<"lq" | "hq">("lq"); // Default: Low Quality
   const [downloadingAll, setDownloadingAll] = useState<string | null>(null);
-
-  // Get current quality preference for downloads
-  const getQualityUrl = (track: AudioTrack) => {
-    return audioQuality === "lq" ? track.lqUrl : track.hqUrl;
-  };
 
   const handlePlayTrack = (track: AudioTrack) => {
     setPlayingTrack(track);
   };
 
-  // Download single track with proper filename
-  const handleDownloadTrack = async (track: AudioTrack) => {
-    const url = getQualityUrl(track);
+  // Download single track - Direct link method (no blob, instant browser download)
+  const handleDownloadTrack = (track: AudioTrack) => {
+    // Always use LQ (low quality) as default for downloads
+    const url = track.lqUrl || track.hqUrl;
     const filename = `${track.titleAr}.mp3`;
     
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const downloadUrl = URL.createObjectURL(blob);
-      
-      const a = document.createElement("a");
-      a.href = downloadUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(downloadUrl);
-    } catch {
-      // Fallback: open in new tab
-      window.open(url, "_blank");
-    }
+    // Create hidden anchor with download attribute
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Alternative: use window.location.assign for direct download
+    // This triggers browser's native download manager immediately
+    // window.location.assign(url);
   };
 
-  const handleDownloadAll = async (matn: Matn) => {
+  // Bulk download - opens all downloads via native browser download manager
+  const handleDownloadAll = (matn: Matn) => {
     setDownloadingAll(matn.id);
     const tracks = getAllTracks(matn);
     
-    for (const track of tracks) {
-      const url = audioQuality === "lq" ? track.lqUrl : track.hqUrl;
+    // Use direct link approach - no blob, instant download
+    tracks.forEach((track, index) => {
+      // Always use LQ as default
+      const url = track.lqUrl || track.hqUrl;
       const filename = `${track.titleAr}.mp3`;
       
-      try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const downloadUrl = URL.createObjectURL(blob);
-        
+      setTimeout(() => {
         const a = document.createElement("a");
-        a.href = downloadUrl;
+        a.href = url;
         a.download = filename;
+        a.style.display = "none";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(downloadUrl);
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-      } catch (error) {
-        console.error("Download failed:", error);
-      }
-    }
+      }, index * 300); // Stagger downloads by 300ms
+    });
     
-    setDownloadingAll(null);
+    setTimeout(() => setDownloadingAll(null), tracks.length * 300 + 500);
   };
 
   const formatDuration = (seconds: number) => {

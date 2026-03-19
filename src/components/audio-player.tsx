@@ -128,28 +128,21 @@ export function AudioPlayer({
     onQualityChange?.(newQuality);
   };
 
-  // Download function with proper filename handling
-  const handleDownload = async () => {
-    const url = quality === "lq" ? currentTrack.lqUrl : currentTrack.hqUrl;
+  // Download function - Direct link method (instant browser download, no blob)
+  const handleDownload = () => {
+    // Always use LQ (low quality) as default for downloads
+    const url = currentTrack.lqUrl || currentTrack.hqUrl;
     const filename = `${currentTrack.titleAr}.mp3`;
     
-    try {
-      // Try to fetch and create blob for download
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
-    } catch {
-      // Fallback: open in new tab
-      window.open(url, '_blank');
-    }
+    // Create hidden anchor with download attribute
+    // This triggers browser's native download manager immediately
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
