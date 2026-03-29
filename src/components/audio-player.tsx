@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
 import { Progress } from "./ui/progress";
@@ -22,7 +22,7 @@ import { useAudioStore } from "@/stores/audio-store";
 
 export function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   
   // Get state from Zustand store
   const {
@@ -34,6 +34,7 @@ export function AudioPlayer() {
     volume,
     isMuted,
     repeatMode,
+    playlist,
     setAudioQuality,
     setIsPlaying,
     setCurrentTime,
@@ -41,6 +42,8 @@ export function AudioPlayer() {
     setVolume,
     toggleMute,
     toggleRepeat,
+    skipForward,
+    skipBackward,
     getAudioUrl,
   } = useAudioStore();
 
@@ -142,15 +145,32 @@ export function AudioPlayer() {
     document.body.removeChild(a);
   }, [currentTrack]);
 
+  // Handle skip forward
+  const handleSkipForward = useCallback(() => {
+    skipForward();
+  }, [skipForward]);
+
+  // Handle skip backward
+  const handleSkipBackward = useCallback(() => {
+    if (audioRef.current && currentTime > 3) {
+      audioRef.current.currentTime = 0;
+      setCurrentTime(0);
+      return;
+    }
+    skipBackward();
+  }, [skipBackward, currentTime, setCurrentTime]);
+
   // Handle track ended
   const handleEnded = useCallback(() => {
     if (repeatMode === 'one' && audioRef.current) {
       audioRef.current.currentTime = 0;
       audioRef.current.play();
+    } else if (repeatMode === 'all' || playlist.length > 0) {
+      skipForward();
     } else {
       setIsPlaying(false);
     }
-  }, [repeatMode, setIsPlaying]);
+  }, [repeatMode, setIsPlaying, skipForward, playlist.length]);
 
   // Effect: Update audio source when track or quality changes
   useEffect(() => {
@@ -273,7 +293,7 @@ export function AudioPlayer() {
                 )}
               />
             </Button>
-            <Button variant="ghost" size="icon" className="text-[#94a3b8] hover:text-white hover:bg-[#334155]">
+            <Button variant="ghost" size="icon" className="text-[#94a3b8] hover:text-white hover:bg-[#334155]" onClick={handleSkipBackward}>
               <SkipBack className="h-5 w-5" />
             </Button>
             <Button
@@ -287,7 +307,7 @@ export function AudioPlayer() {
                 <Play className="h-6 w-6 text-[#0f172a] ml-[-2px]" />
               )}
             </Button>
-            <Button variant="ghost" size="icon" className="text-[#94a3b8] hover:text-white hover:bg-[#334155]">
+            <Button variant="ghost" size="icon" className="text-[#94a3b8] hover:text-white hover:bg-[#334155]" onClick={handleSkipForward}>
               <SkipForward className="h-5 w-5" />
             </Button>
             <Button variant="ghost" size="icon" className="hidden sm:flex text-[#94a3b8] hover:text-white hover:bg-[#334155]">
@@ -389,5 +409,3 @@ export function AudioPlayer() {
   );
 }
 
-// Import React for useState
-import React from "react";

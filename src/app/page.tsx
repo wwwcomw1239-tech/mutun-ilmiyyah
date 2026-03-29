@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,19 +11,14 @@ import {
   Play,
   Clock,
   User,
-  Download,
   DownloadCloud,
   Headphones,
   Layers,
   ChevronLeft,
   Library,
-  Volume2,
   Heart,
-  FileText,
   Languages,
   Scale,
-  Check,
-  ArrowDownToLine,
   Package,
 } from "lucide-react";
 import { mutoon, categories, getAllTracks, type Matn, type AudioTrack } from "@/data/mutoon";
@@ -40,13 +35,36 @@ const categoryIcons: Record<string, React.ElementType> = {
 export default function Home() {
   const [activeTab, setActiveTab] = useState("library");
   const [downloadingAll, setDownloadingAll] = useState<string | null>(null);
+  const libraryRef = useRef<HTMLDivElement>(null);
   
   // Use global audio store
-  const { setTrack, audioQuality, setAudioQuality, currentTrack } = useAudioStore();
+  const { setTrack, audioQuality, setAudioQuality, currentTrack, searchQuery } = useAudioStore();
+
+  // Filter mutoon based on search query
+  const filteredMutoon = useMemo(() => {
+    if (!searchQuery.trim()) return mutoon;
+    const q = searchQuery.trim().toLowerCase();
+    return mutoon.filter(m =>
+      m.titleAr.includes(q) ||
+      m.title.toLowerCase().includes(q) ||
+      m.authorAr.includes(q) ||
+      m.author.toLowerCase().includes(q) ||
+      m.descriptionAr.includes(q) ||
+      m.category.toLowerCase().includes(q) ||
+      m.scholarAr.includes(q)
+    );
+  }, [searchQuery]);
 
   // Play track - updates global store which triggers AudioPlayer
-  const handlePlayTrack = (track: AudioTrack) => {
-    setTrack(track);
+  const handlePlayTrack = (track: AudioTrack, matn?: Matn) => {
+    const playlist = matn ? getAllTracks(matn) : [track];
+    setTrack(track, playlist);
+  };
+
+  // Scroll to library section
+  const scrollToLibrary = () => {
+    setActiveTab("library");
+    libraryRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   // Download single track - Direct link method (no blob, instant browser download)
@@ -128,11 +146,17 @@ export default function Home() {
             وَفْقَ مَنْهَجِ أَهْلِ السُّنَّةِ وَالْجَمَاعَةِ
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button size="lg" className="btn-gold gap-2">
+            <Button size="lg" className="btn-gold gap-2" onClick={() => {
+              const firstMatn = filteredMutoon[0];
+              if (firstMatn) {
+                const tracks = getAllTracks(firstMatn);
+                if (tracks.length > 0) handlePlayTrack(tracks[0], firstMatn);
+              }
+            }}>
               <Headphones className="h-5 w-5" />
               <span className="arabic-text">ابْدَأِ الاسْتِمَاعَ</span>
             </Button>
-            <Button variant="outline" size="lg" className="gap-2 border-[#334155] text-[#d4af37] hover:bg-[#1e293b]">
+            <Button variant="outline" size="lg" className="gap-2 border-[#334155] text-[#d4af37] hover:bg-[#1e293b]" onClick={scrollToLibrary}>
               <Library className="h-5 w-5" />
               <span className="arabic-text">تَصَفَّحِ المَكْتَبَةَ</span>
             </Button>
@@ -143,8 +167,8 @@ export default function Home() {
       {/* Stats Bar */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "المُتُونُ", value: mutoon.length, icon: BookOpen },
-          { label: "الأَبْوَابُ", value: mutoon.reduce((acc, m) => acc + m.totalChapters, 0), icon: Layers },
+          { label: "المُتُونُ", value: filteredMutoon.length, icon: BookOpen },
+          { label: "الأَبْوَابُ", value: filteredMutoon.reduce((acc, m) => acc + m.totalChapters, 0), icon: Layers },
           { label: "الشُّيُوخُ", value: 2, icon: User },
           { label: "الأَقْسَامُ", value: categories.length, icon: Library },
         ].map((stat, index) => {
@@ -167,6 +191,7 @@ export default function Home() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <div ref={libraryRef}></div>
         <TabsList className="bg-[#0f172a]/5 dark:bg-[#1e293b] p-1 rounded-xl">
           <TabsTrigger value="library" className="arabic-text gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-[#0f172a] data-[state=active]:text-[#d4af37]">
             <Library className="h-4 w-4" />
@@ -185,7 +210,7 @@ export default function Home() {
         {/* Library Tab */}
         <TabsContent value="library" className="space-y-6">
           <div className="grid gap-6">
-            {mutoon.map((matn) => {
+            {filteredMutoon.map((matn) => {
               const IconComponent = categoryIcons[matn.categoryId] || BookOpen;
               return (
                 <Card key={matn.id} className="card-hover border-[#e2e8f0] dark:border-[#334155] overflow-hidden">
@@ -286,7 +311,7 @@ export default function Home() {
                                       <Button
                                         size="icon"
                                         className="h-10 w-10 rounded-full bg-[#0f172a] hover:bg-[#1e293b] dark:bg-[#d4af37] dark:hover:bg-[#b8860b]"
-                                        onClick={() => handlePlayTrack(track)}
+                                        onClick={() => handlePlayTrack(track, matn)}
                                       >
                                         <Play className="h-4 w-4 text-white dark:text-[#0f172a]" />
                                       </Button>
@@ -327,7 +352,7 @@ export default function Home() {
                           <Button
                             size="icon"
                             className="h-12 w-12 rounded-full bg-[#0f172a] hover:bg-[#1e293b] dark:bg-[#d4af37] dark:hover:bg-[#b8860b]"
-                            onClick={() => handlePlayTrack(matn.singleTrack!)}
+                            onClick={() => handlePlayTrack(matn.singleTrack!, matn)}
                           >
                             <Play className="h-5 w-5 text-white dark:text-[#0f172a]" />
                           </Button>
