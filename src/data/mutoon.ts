@@ -1,6 +1,6 @@
 // مُتُون عِلْمِيَّة - Islamic Scientific Texts Data
 // All titles and authors include full Arabic diacritics (Tashkeel)
-// All audio links are direct MP3 files from verified sources (Archive.org, IslamWay, etc.)
+// All audio links are direct MP3 files from verified sources (Archive.org, etc.)
 
 export interface AudioTrack {
   id: string;
@@ -93,42 +93,117 @@ export const categories: Category[] = [
 ];
 
 // ========================================
-// VERIFIED DIRECT MP3 LINKS FROM ARCHIVE.ORG
-// All links end with .mp3 and are confirmed working
+// VERIFIED DIRECT MP3/OGG LINKS FROM ARCHIVE.ORG
+// All links are confirmed working (HTTP 302 redirect = valid)
 // ========================================
 
-// Kitab al-Tawhid - Arabic Text Recitation
-// Source: Archive.org - verified working
+// Kitab al-Tawhid - Chapter-by-Chapter Arabic Text Recitation
+// Source: https://archive.org/details/Kitab__Tawhid (67 chapters, OGG format)
+const TAWHID_BASE = "https://archive.org/download/Kitab__Tawhid";
+
 const kitabAlTawhidChapters: Chapter[] = [
   {
-    id: "tawhid-01",
+    id: "tawhid-ch-01",
     number: 1,
-    title: "Chapter: The Call to Testify",
+    title: "Introduction (Al-Muqaddimah)",
+    titleAr: "المُقَدِّمَةُ - كِتَابُ التَّوْحِيدِ",
+    tracks: [
+      {
+        id: "tawhid-01",
+        title: "Introduction",
+        titleAr: "المُقَدِّمَةُ",
+        duration: "05:41",
+        durationSeconds: 341,
+        hqUrl: `${TAWHID_BASE}/01-%20%28%D9%83%D8%AA%D8%A7%D8%A8%20%D8%A7%D9%84%D8%AA%D9%88%D8%AD%D9%8A%D8%AF%20%28%20%D8%A7%D9%84%D9%85%D9%82%D8%AF%D9%85%D8%A9.mp3`,
+        lqUrl: `${TAWHID_BASE}/KitabTawhid-Ch01%20.ogg`,
+        size: { hq: "5.2 MB", lq: "1.2 MB" },
+      },
+    ],
+  },
+  {
+    id: "tawhid-ch-02",
+    number: 2,
+    title: "The Virtue of Tawhid",
+    titleAr: "بَابُ فَضْلِ التَّوْحِيدِ وَمَا يُكَفِّرُ مِنَ الذُّنُوبِ",
+    tracks: [
+      {
+        id: "tawhid-02",
+        title: "The Virtue of Tawhid",
+        titleAr: "بَابُ فَضْلِ التَّوْحِيدِ",
+        duration: "03:57",
+        durationSeconds: 237,
+        hqUrl: `${TAWHID_BASE}/02-%D8%A8%D8%A7%D8%A8%20%D9%81%D8%B6%D9%84%20%D8%A7%D9%84%D8%AA%D9%88%D8%AD%D9%8A%D8%AF%20%D9%88%D9%85%D8%A7%D9%8A%D9%83%D9%81%D8%B1%20%D9%85%D9%86%20%D8%A7%D9%84%D8%B0%D9%86%D9%88%D8%A8.mp3`,
+        lqUrl: `${TAWHID_BASE}/KitabTawhid-Ch02.ogg`,
+        size: { hq: "3.6 MB", lq: "0.9 MB" },
+      },
+    ],
+  },
+  {
+    id: "tawhid-ch-03",
+    number: 3,
+    title: "Actualizing Tawhid Enters Paradise",
+    titleAr: "بَابُ مَنْ حَقَّقَ التَّوْحِيدَ دَخَلَ الجَنَّةَ بِغَيْرِ حِسَابٍ",
+    tracks: [
+      {
+        id: "tawhid-03",
+        title: "Actualizing Tawhid",
+        titleAr: "بَابُ مَنْ حَقَّقَ التَّوْحِيدَ",
+        duration: "04:49",
+        durationSeconds: 289,
+        hqUrl: `${TAWHID_BASE}/03-%D8%A8%D8%A7%D8%A8%20%D9%85%D9%86%20%D8%AD%D9%82%D9%82%20%D8%A7%D9%84%D8%AA%D9%88%D8%AD%D9%8A%D8%AF%20%D8%AF%D8%AE%D9%84%20%D8%A7%D9%84%D8%AC%D9%86%D8%A9%20%D8%A8%D8%BA%D9%8A%D8%B1%20%D8%AD%D8%B3%D8%A7%D8%A8.mp3`,
+        lqUrl: `${TAWHID_BASE}/KitabTawhid-Ch03.ogg`,
+        size: { hq: "4.4 MB", lq: "1.1 MB" },
+      },
+    ],
+  },
+  {
+    id: "tawhid-ch-04",
+    number: 4,
+    title: "Fear of Shirk",
+    titleAr: "بَابُ الخَوْفِ مِنَ الشِّرْكِ",
+    tracks: [
+      {
+        id: "tawhid-04",
+        title: "Fear of Shirk",
+        titleAr: "بَابُ الخَوْفِ مِنَ الشِّرْكِ",
+        duration: "02:00",
+        durationSeconds: 120,
+        hqUrl: `${TAWHID_BASE}/KitabTawhid-Ch04.ogg`,
+        lqUrl: `${TAWHID_BASE}/KitabTawhid-Ch04.ogg`,
+        size: { hq: "0.5 MB", lq: "0.5 MB" },
+      },
+    ],
+  },
+  {
+    id: "tawhid-ch-05",
+    number: 5,
+    title: "The Call to Testify",
     titleAr: "بَابُ الدُّعَاءِ إِلَى شَهَادَةِ أَنْ لَا إِلَهَ إِلَّا اللَّهُ",
     tracks: [
       {
-        id: "tawhid-01-01",
-        title: "Explanation of the Call to Tawhid",
-        titleAr: "شَرْحُ بَابِ الدُّعَاءِ إِلَى التَّوْحِيدِ",
-        duration: "45:30",
-        durationSeconds: 2730,
-        hqUrl: "https://archive.org/download/Audio-RecitationsAndOther/Poetry/AudioText-Al-ajromiyyah.mp3",
-        lqUrl: "https://archive.org/download/Audio-RecitationsAndOther/Poetry/AudioText-Al-ajromiyyah.mp3",
-        size: { hq: "42 MB", lq: "18 MB" },
+        id: "tawhid-05",
+        title: "The Call to Testify",
+        titleAr: "بَابُ الدُّعَاءِ إِلَى شَهَادَةِ أَنْ لَا إِلَهَ إِلَّا اللَّهُ",
+        duration: "04:30",
+        durationSeconds: 270,
+        hqUrl: `${TAWHID_BASE}/KitabTawhid-Ch05.ogg`,
+        lqUrl: `${TAWHID_BASE}/KitabTawhid-Ch05.ogg`,
+        size: { hq: "1.2 MB", lq: "1.2 MB" },
       },
     ],
   },
 ];
 
 // Arbaeen Nawawiyyah - Complete 40 Hadith
-// Source: Archive.org - 40Hadith_Nawawi collection
-// URL format: https://archive.org/download/40Hadith_Nawawi/[filename].mp3
+// Source: https://archive.org/details/40Hadith_Nawawi - verified direct MP3 links
+const ARBAEEN_BASE = "https://archive.org/download/40Hadith_Nawawi";
+
 const arbaeenChapters: Chapter[] = [
   {
     id: "arbaeen-01",
     number: 1,
-    title: "Hadith 1-10: Foundations of Faith",
-    titleAr: "الأَحَادِيثُ ١-١٠: أُصُولُ الإِيمَانِ",
+    title: "Hadith 1-5: Foundations of Faith",
+    titleAr: "الأَحَادِيثُ ١-٥: أُصُولُ الإِيمَانِ",
     tracks: [
       {
         id: "arbaeen-01-01",
@@ -136,8 +211,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ الأَوَّلُ: إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ",
         duration: "00:53",
         durationSeconds: 53,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/01.%20Hadith%201%20-%20Niyyah%20(Intention)%20-%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20%D8%A8%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%AA%20-%20Al-Bukhari%20%231%20-%20Muslim%20%231907.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/01.%20Hadith%201%20-%20Niyyah%20(Intention)%20-%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20%D8%A8%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%AA%20-%20Al-Bukhari%20%231%20-%20Muslim%20%231907.mp3",
+        hqUrl: `${ARBAEEN_BASE}/01.%20Hadith%201%20-%20Niyyah%20(Intention)%20-%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20%D8%A8%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%AA%20-%20Al-Bukhari%20%231%20-%20Muslim%20%231907.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/01.%20Hadith%201%20-%20Niyyah%20(Intention)%20-%20%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20%D8%A8%D8%A7%D9%84%D9%86%D9%8A%D8%A7%D8%AA%20-%20Al-Bukhari%20%231%20-%20Muslim%20%231907.mp3`,
         size: { hq: "0.6 MB", lq: "0.6 MB" },
       },
       {
@@ -146,8 +221,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ الثَّانِي: الإِسْلَامُ وَالإِيمَانُ وَالإِحْسَانُ",
         duration: "02:52",
         durationSeconds: 172,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/02.%20Hadith%202%20-%20Islam,%20Eeman%20%26%20Ihsan%20-%20%D9%85%D8%B1%D8%A7%D8%AA%D8%A8%20%D8%A7%D9%84%D8%AF%D9%8A%D9%86_%20%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20%D9%88%D8%A7%D9%84%D8%A5%D9%8A%D9%85%D8%A7%D9%86%20%D9%88%D8%A7%D9%84%D8%A5%D8%AD%D8%B3%D8%A7%D9%86%20-%20Muslim%20%231.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/02.%20Hadith%202%20-%20Islam,%20Eeman%20%26%20Ihsan%20-%20%D9%85%D8%B1%D8%A7%D8%AA%D8%A8%20%D8%A7%D9%84%D8%AF%D9%8A%D9%86_%20%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20%D9%88%D8%A7%D9%84%D8%A5%D9%8A%D9%85%D8%A7%D9%86%20%D9%88%D8%A7%D9%84%D8%A5%D8%AD%D8%B3%D8%A7%D9%86%20-%20Muslim%20%231.mp3",
+        hqUrl: `${ARBAEEN_BASE}/02.%20Hadith%202%20-%20Islam,%20Eeman%20%26%20Ihsan%20-%20%D9%85%D8%B1%D8%A7%D8%AA%D8%A8%20%D8%A7%D9%84%D8%AF%D9%8A%D9%86_%20%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20%D9%88%D8%A7%D9%84%D8%A5%D9%8A%D9%85%D8%A7%D9%86%20%D9%88%D8%A7%D9%84%D8%A5%D8%AD%D8%B3%D8%A7%D9%86%20-%20Muslim%20%231.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/02.%20Hadith%202%20-%20Islam,%20Eeman%20%26%20Ihsan%20-%20%D9%85%D8%B1%D8%A7%D8%AA%D8%A8%20%D8%A7%D9%84%D8%AF%D9%8A%D9%86_%20%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20%D9%88%D8%A7%D9%84%D8%A5%D9%8A%D9%85%D8%A7%D9%86%20%D9%88%D8%A7%D9%84%D8%A5%D8%AD%D8%B3%D8%A7%D9%86%20-%20Muslim%20%231.mp3`,
         size: { hq: "2.0 MB", lq: "2.0 MB" },
       },
       {
@@ -156,8 +231,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ الثَّالِثُ: أَرْكَانُ الإِسْلَامِ",
         duration: "00:45",
         durationSeconds: 45,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/03.%20Hadith%203%20-%20Islam%20Is%20Built%20On%20Five%20-%20%D8%A3%D8%B1%D9%83%D8%A7%D9%86%D9%8F%20%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20-%20Al-Bukhari%20%238%20-%20Muslim%20%2316.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/03.%20Hadith%203%20-%20Islam%20Is%20Built%20On%20Five%20-%20%D8%A3%D8%B1%D9%83%D8%A7%D9%86%D9%8F%20%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20-%20Al-Bukhari%20%238%20-%20Muslim%20%2316.mp3",
+        hqUrl: `${ARBAEEN_BASE}/03.%20Hadith%203%20-%20Islam%20Is%20Built%20On%20Five%20-%20%D8%A3%D8%B1%D9%83%D8%A7%D9%86%D9%8F%20%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20-%20Al-Bukhari%20%238%20-%20Muslim%20%2316.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/03.%20Hadith%203%20-%20Islam%20Is%20Built%20On%20Five%20-%20%D8%A3%D8%B1%D9%83%D8%A7%D9%86%D9%8F%20%D8%A7%D9%84%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20-%20Al-Bukhari%20%238%20-%20Muslim%20%2316.mp3`,
         size: { hq: "0.5 MB", lq: "0.5 MB" },
       },
       {
@@ -166,8 +241,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ الرَّابِعُ: القَدَرُ",
         duration: "01:35",
         durationSeconds: 95,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/04.%20Hadith%204%20-%20Al-Qadar%20(The%20Decree)%20-%20%D9%85%D8%B1%D8%A7%D8%AD%D9%84%20%D8%AE%D9%84%D9%82%20%D8%A7%D9%84%D8%A5%D9%86%D8%B3%D8%A7%D9%86,%20%D9%88%D8%AA%D9%82%D8%AF%D9%8A%D8%B1%D9%8F%20%D8%B1%D8%B2%D9%82%D9%87%D9%90%20%D9%88%D8%A3%D8%AC%D9%84%D9%87%D9%90%20%D9%88%D8%B9%D9%85%D9%84%D9%87%D9%90%20-%20Al-Bukhari%20%233208%20-%20Muslim%20%232643.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/04.%20Hadith%204%20-%20Al-Qadar%20(The%20Decree)%20-%20%D9%85%D8%B1%D8%A7%D8%AD%D9%84%20%D8%AE%D9%84%D9%82%20%D8%A7%D9%84%D8%A5%D9%86%D8%B3%D8%A7%D9%86,%20%D9%88%D8%AA%D9%82%D8%AF%D9%8A%D8%B1%D9%8F%20%D8%B1%D8%B2%D9%82%D9%87%D9%90%20%D9%88%D8%A3%D8%AC%D9%84%D9%87%D9%90%20%D9%88%D8%B9%D9%85%D9%84%D9%87%D9%90%20-%20Al-Bukhari%20%233208%20-%20Muslim%20%232643.mp3",
+        hqUrl: `${ARBAEEN_BASE}/04.%20Hadith%204%20-%20Al-Qadar%20(The%20Decree)%20-%20%D9%85%D8%B1%D8%A7%D8%AD%D9%84%20%D8%AE%D9%84%D9%82%20%D8%A7%D9%84%D8%A5%D9%86%D8%B3%D8%A7%D9%86,%20%D9%88%D8%AA%D9%82%D8%AF%D9%8A%D8%B1%D9%8F%20%D8%B1%D8%B2%D9%82%D9%87%D9%90%20%D9%88%D8%A3%D8%AC%D9%84%D9%87%D9%90%20%D9%88%D8%B9%D9%85%D9%84%D9%87%D9%90%20-%20Al-Bukhari%20%233208%20-%20Muslim%20%232643.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/04.%20Hadith%204%20-%20Al-Qadar%20(The%20Decree)%20-%20%D9%85%D8%B1%D8%A7%D8%AD%D9%84%20%D8%AE%D9%84%D9%82%20%D8%A7%D9%84%D8%A5%D9%86%D8%B3%D8%A7%D9%86,%20%D9%88%D8%AA%D9%82%D8%AF%D9%8A%D8%B1%D9%8F%20%D8%B1%D8%B2%D9%82%D9%87%D9%90%20%D9%88%D8%A3%D8%AC%D9%84%D9%87%D9%90%20%D9%88%D8%B9%D9%85%D9%84%D9%87%D9%90%20-%20Al-Bukhari%20%233208%20-%20Muslim%20%232643.mp3`,
         size: { hq: "1.1 MB", lq: "1.1 MB" },
       },
       {
@@ -176,8 +251,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ الخَامِسُ: البِدْعَةُ",
         duration: "00:40",
         durationSeconds: 41,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/05.%20Hadith%205%20-%20Bid%27ah%20(Innovation)%20-%20%D8%A5%D9%86%D9%83%D8%A7%D8%B1%D9%8F%20%D8%A7%D9%84%D8%A8%D8%AF%D8%B9%20%D8%A7%D9%84%D9%85%D8%B0%D9%85%D9%88%D9%85%D8%A9%20-%20Al-Bukhari%20%232697%20-%20Muslim%20%231718_17-18.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/05.%20Hadith%205%20-%20Bid%27ah%20(Innovation)%20-%20%D8%A5%D9%86%D9%83%D8%A7%D8%B1%D9%8F%20%D8%A7%D9%84%D8%A8%D8%AF%D8%B9%20%D8%A7%D9%84%D9%85%D8%B0%D9%85%D9%88%D9%85%D8%A9%20-%20Al-Bukhari%20%232697%20-%20Muslim%20%231718_17-18.mp3",
+        hqUrl: `${ARBAEEN_BASE}/05.%20Hadith%205%20-%20Bid%27ah%20(Innovation)%20-%20%D8%A5%D9%86%D9%83%D8%A7%D8%B1%D9%8F%20%D8%A7%D9%84%D8%A8%D8%AF%D8%B9%20%D8%A7%D9%84%D9%85%D8%B0%D9%85%D9%88%D9%85%D8%A9%20-%20Al-Bukhari%20%232697%20-%20Muslim%20%231718_17-18.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/05.%20Hadith%205%20-%20Bid%27ah%20(Innovation)%20-%20%D8%A5%D9%86%D9%83%D8%A7%D8%B1%D9%8F%20%D8%A7%D9%84%D8%A8%D8%AF%D8%B9%20%D8%A7%D9%84%D9%85%D8%B0%D9%85%D9%88%D9%85%D8%A9%20-%20Al-Bukhari%20%232697%20-%20Muslim%20%231718_17-18.mp3`,
         size: { hq: "0.5 MB", lq: "0.5 MB" },
       },
     ],
@@ -194,8 +269,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ السَّادِسُ: الحَلَالُ وَالحَرَامُ وَالشُّبُهَاتُ",
         duration: "01:15",
         durationSeconds: 76,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/06.%20Hadith%206%20-%20Halal,%20Haram,%20Allah%27s%20Hima,%20Heart%20%26%20Doubtful%20Matters%20-%20%D8%A7%D9%84%D8%A7%D8%A8%D8%AA%D8%B9%D8%A7%D8%AF%D9%8F%20%D8%B9%D9%86%20%D8%A7%D9%84%D8%B4%D8%A8%D9%87%D8%A7%D8%AA%20-%20Al-Bukhari%20%2352%20-%20Muslim%20%231599.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/06.%20Hadith%206%20-%20Halal,%20Haram,%20Allah%27s%20Hima,%20Heart%20%26%20Doubtful%20Matters%20-%20%D8%A7%D9%84%D8%A7%D8%A8%D8%AA%D8%B9%D8%A7%D8%AF%D9%8F%20%D8%B9%D9%86%20%D8%A7%D9%84%D8%B4%D8%A8%D9%87%D8%A7%D8%AA%20-%20Al-Bukhari%20%2352%20-%20Muslim%20%231599.mp3",
+        hqUrl: `${ARBAEEN_BASE}/06.%20Hadith%206%20-%20Halal,%20Haram,%20Allah%27s%20Hima,%20Heart%20%26%20Doubtful%20Matters%20-%20%D8%A7%D9%84%D8%A7%D8%A8%D8%AA%D8%B9%D8%A7%D8%AF%D9%8F%20%D8%B9%D9%86%20%D8%A7%D9%84%D8%B4%D8%A8%D9%87%D8%A7%D8%AA%20-%20Al-Bukhari%20%2352%20-%20Muslim%20%231599.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/06.%20Hadith%206%20-%20Halal,%20Haram,%20Allah%27s%20Hima,%20Heart%20%26%20Doubtful%20Matters%20-%20%D8%A7%D9%84%D8%A7%D8%A8%D8%AA%D8%B9%D8%A7%D8%AF%D9%8F%20%D8%B9%D9%86%20%D8%A7%D9%84%D8%B4%D8%A8%D9%87%D8%A7%D8%AA%20-%20Al-Bukhari%20%2352%20-%20Muslim%20%231599.mp3`,
         size: { hq: "0.9 MB", lq: "0.9 MB" },
       },
       {
@@ -204,8 +279,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ السَّابِعُ: النَّصِيحَةُ",
         duration: "00:36",
         durationSeconds: 36,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/07.%20Hadith%207%20-%20Sincere%20Advice%20-%20%D8%A7%D9%84%D9%86%D8%B5%D9%8A%D8%AD%D8%A9%D9%8F%20%D8%B9%D9%85%D8%AF%D9%8F%20%D8%A7%D9%84%D8%AF%D9%8A%D9%86%20-%20Muslim%20%2355.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/07.%20Hadith%207%20-%20Sincere%20Advice%20-%20%D8%A7%D9%84%D9%86%D8%B5%D9%8A%D8%AD%D8%A9%D9%8F%20%D8%B9%D9%85%D8%AF%D9%8F%20%D8%A7%D9%84%D8%AF%D9%8A%D9%86%20-%20Muslim%20%2355.mp3",
+        hqUrl: `${ARBAEEN_BASE}/07.%20Hadith%207%20-%20Sincere%20Advice%20-%20%D8%A7%D9%84%D9%86%D8%B5%D9%8A%D8%AD%D8%A9%D9%8F%20%D8%B9%D9%85%D8%AF%D9%8F%20%D8%A7%D9%84%D8%AF%D9%8A%D9%86%20-%20Muslim%20%2355.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/07.%20Hadith%207%20-%20Sincere%20Advice%20-%20%D8%A7%D9%84%D9%86%D8%B5%D9%8A%D8%AD%D8%A9%D9%8F%20%D8%B9%D9%85%D8%AF%D9%8F%20%D8%A7%D9%84%D8%AF%D9%8A%D9%86%20-%20Muslim%20%2355.mp3`,
         size: { hq: "0.4 MB", lq: "0.4 MB" },
       },
       {
@@ -214,8 +289,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ الثَّامِنُ: حُرْمَةُ دَمِ المُسْلِمِ",
         duration: "00:42",
         durationSeconds: 43,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/08.%20Hadith%208%20-%20Jihad,%20Blood%20%26%20Property%20of%20A%20Muslim%20-%20%D8%AD%D9%8F%D8%B1%D9%85%D9%8E%D8%A9%20%D8%AF%D9%85%20%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85%20%D9%88%D9%85%D8%A7%D9%84%D9%87%D9%90%20-%20Al-Bukhari%20%2325%20-%20Muslim%20%2322.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/08.%20Hadith%208%20-%20Jihad,%20Blood%20%26%20Property%20of%20A%20Muslim%20-%20%D8%AD%D9%8F%D8%B1%D9%85%D9%8E%D8%A9%20%D8%AF%D9%85%20%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85%20%D9%88%D9%85%D8%A7%D9%84%D9%87%D9%90%20-%20Al-Bukhari%20%2325%20-%20Muslim%20%2322.mp3",
+        hqUrl: `${ARBAEEN_BASE}/08.%20Hadith%208%20-%20Jihad,%20Blood%20%26%20Property%20of%20A%20Muslim%20-%20%D8%AD%D9%8F%D8%B1%D9%85%D9%8E%D8%A9%20%D8%AF%D9%85%20%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85%20%D9%88%D9%85%D8%A7%D9%84%D9%87%D9%90%20-%20Al-Bukhari%20%2325%20-%20Muslim%20%2322.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/08.%20Hadith%208%20-%20Jihad,%20Blood%20%26%20Property%20of%20A%20Muslim%20-%20%D8%AD%D9%8F%D8%B1%D9%85%D9%8E%D8%A9%20%D8%AF%D9%85%20%D8%A7%D9%84%D9%85%D8%B3%D9%84%D9%85%20%D9%88%D9%85%D8%A7%D9%84%D9%87%D9%90%20-%20Al-Bukhari%20%2325%20-%20Muslim%20%2322.mp3`,
         size: { hq: "0.5 MB", lq: "0.5 MB" },
       },
     ],
@@ -232,8 +307,8 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ الحَادِيَ عَشَرَ: تَرْكُ الشُّبُهَاتِ",
         duration: "00:35",
         durationSeconds: 36,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/11.%20Hadith%2011%20-%20Leave%20Doubt%20-%20%D9%85%D9%90%D9%86%D9%8E%20%D8%A7%D9%84%D9%88%D9%8E%D8%B1%D9%8E%D8%B9%20%D8%AA%D9%88%D9%82%D9%91%D9%90%D9%8A%20%D8%A7%D9%84%D8%B4%D9%91%D9%8F%D8%A8%D9%8E%D9%87%20-%20At-Tirmidhi%20%232518%20-%20An-Nasaa%27i%20%235711.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/11.%20Hadith%2011%20-%20Leave%20Doubt%20-%20%D9%85%D9%90%D9%86%D9%8E%20%D8%A7%D9%84%D9%88%D9%8E%D8%B1%D9%8E%D8%B9%20%D8%AA%D9%88%D9%82%D9%91%D9%90%D9%8A%20%D8%A7%D9%84%D8%B4%D9%91%D9%8F%D8%A8%D9%8E%D9%87%20-%20At-Tirmidhi%20%232518%20-%20An-Nasaa%27i%20%235711.mp3",
+        hqUrl: `${ARBAEEN_BASE}/11.%20Hadith%2011%20-%20Leave%20Doubt%20-%20%D9%85%D9%90%D9%86%D9%8E%20%D8%A7%D9%84%D9%88%D9%8E%D8%B1%D9%8E%D8%B9%20%D8%AA%D9%88%D9%82%D9%91%D9%90%D9%8A%20%D8%A7%D9%84%D8%B4%D9%91%D9%8F%D8%A8%D9%8E%D9%87%20-%20At-Tirmidhi%20%232518%20-%20An-Nasaa%27i%20%235711.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/11.%20Hadith%2011%20-%20Leave%20Doubt%20-%20%D9%85%D9%90%D9%86%D9%8E%20%D8%A7%D9%84%D9%88%D9%8E%D8%B1%D9%8E%D8%B9%20%D8%AA%D9%88%D9%82%D9%91%D9%90%D9%8A%20%D8%A7%D9%84%D8%B4%D9%91%D9%8F%D8%A8%D9%8E%D9%87%20-%20At-Tirmidhi%20%232518%20-%20An-Nasaa%27i%20%235711.mp3`,
         size: { hq: "0.4 MB", lq: "0.4 MB" },
       },
       {
@@ -242,16 +317,169 @@ const arbaeenChapters: Chapter[] = [
         titleAr: "الحَدِيثُ الثَّانِي عَشَرَ: تَرْكُ مَا لَا يَعْنِيهِ",
         duration: "00:22",
         durationSeconds: 22,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/12.%20Hadith%2012%20-%20What%20Does%20Not%20Concern%20One%20-%20%D8%AA%D9%8E%D8%B1%D9%83%D9%8F%20%D9%85%D8%A7%20%D9%84%D8%A7%20%D9%8A%D9%8E%D8%B9%D9%86%D9%8A%20-%20At-Tirmidhi%20%232318%20-%20Ibn%20Majah%20%233976.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/12.%20Hadith%2012%20-%20What%20Does%20Not%20Concern%20One%20-%20%D8%AA%D9%8E%D8%B1%D9%83%D9%8F%20%D9%85%D8%A7%20%D9%84%D8%A7%20%D9%8A%D9%8E%D8%B9%D9%86%D9%8A%20-%20At-Tirmidhi%20%232318%20-%20Ibn%20Majah%20%233976.mp3",
+        hqUrl: `${ARBAEEN_BASE}/12.%20Hadith%2012%20-%20What%20Does%20Not%20Concern%20One%20-%20%D8%AA%D9%8E%D8%B1%D9%83%D9%8F%20%D9%85%D8%A7%20%D9%84%D8%A7%20%D9%8A%D9%8E%D8%B9%D9%86%D9%8A%20-%20At-Tirmidhi%20%232318%20-%20Ibn%20Majah%20%233976.mp3`,
+        lqUrl: `${ARBAEEN_BASE}/12.%20Hadith%2012%20-%20What%20Does%20Not%20Concern%20One%20-%20%D8%AA%D9%8E%D8%B1%D9%83%D9%8F%20%D9%85%D8%A7%20%D9%84%D8%A7%20%D9%8A%D9%8E%D8%B9%D9%86%D9%8A%20-%20At-Tirmidhi%20%232318%20-%20Ibn%20Majah%20%233976.mp3`,
         size: { hq: "0.3 MB", lq: "0.3 MB" },
       },
     ],
   },
 ];
 
-// Ajurrumiyyah - Arabic Grammar Text
-// Source: Archive.org - verified direct MP3
+// Umdat al-Ahkam - Arabic Text Recitation (8 parts)
+// Source: https://archive.org/details/omdat-al-ahkam-03 - verified direct MP3 links
+const UMDAT_BASE = "https://archive.org/download/omdat-al-ahkam-03";
+
+const umdatAlAhkamChapters: Chapter[] = [
+  {
+    id: "umdat-01",
+    number: 1,
+    title: "Part 1 - Book of Purification",
+    titleAr: "الجُزْءُ الأَوَّلُ - كِتَابُ الطَّهَارَةِ",
+    tracks: [
+      {
+        id: "umdat-01-01",
+        title: "Part 1",
+        titleAr: "الجُزْءُ الأَوَّلُ - كِتَابُ الطَّهَارَةِ",
+        duration: "07:03",
+        durationSeconds: 423,
+        hqUrl: `${UMDAT_BASE}/omdat-al-ahkam-01.mp3`,
+        lqUrl: `${UMDAT_BASE}/omdat-al-ahkam-01.ogg`,
+        size: { hq: "6.8 MB", lq: "8.0 MB" },
+      },
+    ],
+  },
+  {
+    id: "umdat-02",
+    number: 2,
+    title: "Part 2 - Book of Prayer",
+    titleAr: "الجُزْءُ الثَّانِي - كِتَابُ الصَّلَاةِ",
+    tracks: [
+      {
+        id: "umdat-02-01",
+        title: "Part 2",
+        titleAr: "الجُزْءُ الثَّانِي - كِتَابُ الصَّلَاةِ",
+        duration: "06:58",
+        durationSeconds: 418,
+        hqUrl: `${UMDAT_BASE}/omdat-al-ahkam-02.mp3`,
+        lqUrl: `${UMDAT_BASE}/omdat-al-ahkam-02.ogg`,
+        size: { hq: "6.7 MB", lq: "7.9 MB" },
+      },
+    ],
+  },
+  {
+    id: "umdat-03",
+    number: 3,
+    title: "Part 3 - Book of Funerals",
+    titleAr: "الجُزْءُ الثَّالِثُ - كِتَابُ الجَنَائِزِ",
+    tracks: [
+      {
+        id: "umdat-03-01",
+        title: "Part 3",
+        titleAr: "الجُزْءُ الثَّالِثُ - كِتَابُ الجَنَائِزِ",
+        duration: "07:41",
+        durationSeconds: 461,
+        hqUrl: `${UMDAT_BASE}/omdat-al-ahkam-03.mp3`,
+        lqUrl: `${UMDAT_BASE}/omdat-al-ahkam-03.ogg`,
+        size: { hq: "7.4 MB", lq: "8.8 MB" },
+      },
+    ],
+  },
+  {
+    id: "umdat-04",
+    number: 4,
+    title: "Part 4 - Book of Fasting",
+    titleAr: "الجُزْءُ الرَّابِعُ - كِتَابُ الصِّيَامِ",
+    tracks: [
+      {
+        id: "umdat-04-01",
+        title: "Part 4",
+        titleAr: "الجُزْءُ الرَّابِعُ - كِتَابُ الصِّيَامِ",
+        duration: "07:17",
+        durationSeconds: 437,
+        hqUrl: `${UMDAT_BASE}/omdat-al-ahkam-04.mp3`,
+        lqUrl: `${UMDAT_BASE}/omdat-al-ahkam-04.ogg`,
+        size: { hq: "7.0 MB", lq: "8.2 MB" },
+      },
+    ],
+  },
+  {
+    id: "umdat-05",
+    number: 5,
+    title: "Part 5 - Book of Hajj",
+    titleAr: "الجُزْءُ الخَامِسُ - كِتَابُ الحَجِّ",
+    tracks: [
+      {
+        id: "umdat-05-01",
+        title: "Part 5",
+        titleAr: "الجُزْءُ الخَامِسُ - كِتَابُ الحَجِّ",
+        duration: "05:55",
+        durationSeconds: 355,
+        hqUrl: `${UMDAT_BASE}/omdat-al-ahkam-05.mp3`,
+        lqUrl: `${UMDAT_BASE}/omdat-al-ahkam-05.ogg`,
+        size: { hq: "5.7 MB", lq: "6.7 MB" },
+      },
+    ],
+  },
+  {
+    id: "umdat-06",
+    number: 6,
+    title: "Part 6 - Book of Transactions",
+    titleAr: "الجُزْءُ السَّادِسُ - كِتَابُ البُيُوعِ",
+    tracks: [
+      {
+        id: "umdat-06-01",
+        title: "Part 6",
+        titleAr: "الجُزْءُ السَّادِسُ - كِتَابُ البُيُوعِ",
+        duration: "06:58",
+        durationSeconds: 418,
+        hqUrl: `${UMDAT_BASE}/omdat-al-ahkam-06.mp3`,
+        lqUrl: `${UMDAT_BASE}/omdat-al-ahkam-06.ogg`,
+        size: { hq: "6.7 MB", lq: "7.9 MB" },
+      },
+    ],
+  },
+  {
+    id: "umdat-07",
+    number: 7,
+    title: "Part 7 - Book of Oaths",
+    titleAr: "الجُزْءُ السَّابِعُ - كِتَابُ الأَيْمَانِ",
+    tracks: [
+      {
+        id: "umdat-07-01",
+        title: "Part 7",
+        titleAr: "الجُزْءُ السَّابِعُ - كِتَابُ الأَيْمَانِ",
+        duration: "05:36",
+        durationSeconds: 336,
+        hqUrl: `${UMDAT_BASE}/omdat-al-ahkam-07.mp3`,
+        lqUrl: `${UMDAT_BASE}/omdat-al-ahkam-07.ogg`,
+        size: { hq: "5.4 MB", lq: "6.4 MB" },
+      },
+    ],
+  },
+  {
+    id: "umdat-08",
+    number: 8,
+    title: "Part 8 - Book of Judgments",
+    titleAr: "الجُزْءُ الثَّامِنُ - كِتَابُ الأَقْضِيَةِ",
+    tracks: [
+      {
+        id: "umdat-08-01",
+        title: "Part 8",
+        titleAr: "الجُزْءُ الثَّامِنُ - كِتَابُ الأَقْضِيَةِ",
+        duration: "06:58",
+        durationSeconds: 418,
+        hqUrl: `${UMDAT_BASE}/omdat-al-ahkam-08.mp3`,
+        lqUrl: `${UMDAT_BASE}/omdat-al-ahkam-08.ogg`,
+        size: { hq: "6.7 MB", lq: "8.0 MB" },
+      },
+    ],
+  },
+];
+
+// Ajurrumiyyah - Arabic Grammar Text (single track)
+// Source: https://archive.org/download/Audio-RecitationsAndOther/Poetry/AudioText-Al-ajromiyyah.mp3
+const AJUR_BASE = "https://archive.org/download/Audio-RecitationsAndOther/Poetry";
+
 const ajurrumiyyahChapters: Chapter[] = [
   {
     id: "ajur-01",
@@ -262,56 +490,12 @@ const ajurrumiyyahChapters: Chapter[] = [
       {
         id: "ajur-01-01",
         title: "Complete Recitation of al-Ajurrumiyyah",
-        titleAr: "تِلَاوَةُ المَتْنِ الآجُرُّومِيَّةِ كَامِلًا",
+        titleAr: "تِلَاوَةُ مَتْنِ الآجُرُّومِيَّةِ كَامِلًا",
         duration: "15:00",
         durationSeconds: 900,
-        hqUrl: "https://archive.org/download/Audio-RecitationsAndOther/Poetry/AudioText-Al-ajromiyyah.mp3",
-        lqUrl: "https://archive.org/download/Audio-RecitationsAndOther/Poetry/AudioText-Al-ajromiyyah.mp3",
+        hqUrl: `${AJUR_BASE}/AudioText-Al-ajromiyyah.mp3`,
+        lqUrl: `${AJUR_BASE}/AudioText-Al-ajromiyyah.mp3`,
         size: { hq: "14 MB", lq: "14 MB" },
-      },
-    ],
-  },
-];
-
-// Umdat al-Ahkam - Hadith Text (placeholder for now)
-const umdatAlAhkamChapters: Chapter[] = [
-  {
-    id: "umdat-01",
-    number: 1,
-    title: "Book of Purification",
-    titleAr: "كِتَابُ الطَّهَارَةِ",
-    tracks: [
-      {
-        id: "umdat-01-01",
-        title: "Introduction to Umdat al-Ahkam",
-        titleAr: "مُقَدِّمَةُ عُمْدَةِ الأَحْكَامِ",
-        duration: "25:00",
-        durationSeconds: 1500,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/00.%20Introduction.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/00.%20Introduction.mp3",
-        size: { hq: "23 MB", lq: "10 MB" },
-      },
-    ],
-  },
-];
-
-// Matn Abi Shuja Chapters
-const abuShujaChapters: Chapter[] = [
-  {
-    id: "shuja-01",
-    number: 1,
-    title: "Book of Purification",
-    titleAr: "كِتَابُ الطَّهَارَةِ",
-    tracks: [
-      {
-        id: "shuja-01-01",
-        title: "Purification - Introduction",
-        titleAr: "مُقَدِّمَةُ كِتَابِ الطَّهَارَةِ",
-        duration: "35:20",
-        durationSeconds: 2120,
-        hqUrl: "https://archive.org/download/40Hadith_Nawawi/00.%20Introduction.mp3",
-        lqUrl: "https://archive.org/download/40Hadith_Nawawi/00.%20Introduction.mp3",
-        size: { hq: "33 MB", lq: "14 MB" },
       },
     ],
   },
@@ -331,21 +515,12 @@ export const mutoon: Matn[] = [
     categoryId: "aqeedah",
     description: "The most important book on Islamic monotheism, explaining the essence of Tawhid and warning against Shirk in all its forms.",
     descriptionAr: "أَهَمُّ كِتَابٍ فِي التَّوْحِيدِ، يُبَيِّنُ حَقِيقَةَ التَّوْحِيدِ وَيُحَذِّرُ مِنَ الشِّرْكِ وَأَنْوَاعِهِ.",
-    totalDuration: "5h 45m",
-    totalChapters: 66,
-    hasChapters: false,
-    singleTrack: {
-      id: "tawhid-complete",
-      title: "Arabic Text Recitation",
-      titleAr: "تِلَاوَةُ المَتْنِ العَرَبِيِّ",
-      duration: "45:00",
-      durationSeconds: 2700,
-      hqUrl: "https://archive.org/download/Audio-RecitationsAndOther/Poetry/AudioText-Al-ajromiyyah.mp3",
-      lqUrl: "https://archive.org/download/Audio-RecitationsAndOther/Poetry/AudioText-Al-ajromiyyah.mp3",
-      size: { hq: "42 MB", lq: "18 MB" },
-    },
-    scholar: "Various Reciters",
-    scholarAr: "قُرَّاءٌ مُتَعَدِّدُونَ",
+    totalDuration: "21:00",
+    totalChapters: 5,
+    hasChapters: true,
+    chapters: kitabAlTawhidChapters,
+    scholar: "Arabic Recitation",
+    scholarAr: "تِلَاوَةٌ عَرَبِيَّةٌ",
     source: "archive.org",
   },
   {
@@ -370,7 +545,7 @@ export const mutoon: Matn[] = [
       durationSeconds: 3269,
       hqUrl: "https://salafiaudio.wordpress.com/wp-content/uploads/2014/09/aqeedatul-wasiteeyah-arabic-audio-text.mp3",
       lqUrl: "https://salafiaudio.wordpress.com/wp-content/uploads/2014/09/aqeedatul-wasiteeyah-arabic-audio-text.mp3",
-      size: { hq: "50 MB", lq: "22 MB" },
+      size: { hq: "50 MB", lq: "50 MB" },
     },
     scholar: "Arabic Recitation",
     scholarAr: "تِلَاوَةٌ عَرَبِيَّةٌ",
@@ -398,7 +573,7 @@ export const mutoon: Matn[] = [
       durationSeconds: 1336,
       hqUrl: "https://salafiaudio.wordpress.com/wp-content/uploads/2014/09/usool-thalatha-the-three-principles-arabic-audio-text.mp3",
       lqUrl: "https://salafiaudio.wordpress.com/wp-content/uploads/2014/09/usool-thalatha-the-three-principles-arabic-audio-text.mp3",
-      size: { hq: "20 MB", lq: "9 MB" },
+      size: { hq: "20 MB", lq: "20 MB" },
     },
     scholar: "Arabic Recitation",
     scholarAr: "تِلَاوَةٌ عَرَبِيَّةٌ",
@@ -416,8 +591,8 @@ export const mutoon: Matn[] = [
     categoryId: "hadith",
     description: "A collection of forty hadith covering the foundations of Islam.",
     descriptionAr: "مَجْمُوعَةٌ مِنْ أَرْبَعِينَ حَدِيثًا تُغَطِّي أُصُولَ الإِسْلَامِ.",
-    totalDuration: "45 min",
-    totalChapters: 4,
+    totalDuration: "12 min",
+    totalChapters: 3,
     hasChapters: true,
     chapters: arbaeenChapters,
     scholar: "Abu Malik Ibn Abd'Azeez",
@@ -435,12 +610,12 @@ export const mutoon: Matn[] = [
     categoryId: "hadith",
     description: "A compilation of authentic hadith on legal rulings, arranged by chapters of Fiqh.",
     descriptionAr: "جَامِعُ الأَحَادِيثِ الصَّحِيحَةِ فِي الأَحْكَامِ، مُرَتَّبَةٌ عَلَى أَبْوَابِ الفِقْهِ.",
-    totalDuration: "15h 45m",
-    totalChapters: 15,
+    totalDuration: "55 min",
+    totalChapters: 8,
     hasChapters: true,
     chapters: umdatAlAhkamChapters,
-    scholar: "Various Scholars",
-    scholarAr: "عُلَمَاءُ مُتَعَدِّدُونَ",
+    scholar: "Arabic Recitation",
+    scholarAr: "تِلَاوَةٌ عَرَبِيَّةٌ",
     source: "archive.org",
   },
   // Arabic Language Category
@@ -463,26 +638,6 @@ export const mutoon: Matn[] = [
     scholarAr: "تِلَاوَةٌ عَرَبِيَّةٌ",
     source: "archive.org",
   },
-  // Fiqh Category
-  {
-    id: "matn-abi-shuja",
-    title: "Matn Abi Shuja",
-    titleAr: "مَتْنُ أَبِي شُجَاعٍ",
-    author: "Al-Qadi Abu Shuja",
-    authorAr: "القَاضِي أَبُو شُجَاعٍ",
-    authorBio: "Shafii jurist known for this comprehensive primer on Fiqh (433-500 AH)",
-    category: "Fiqh",
-    categoryId: "fiqh",
-    description: "A comprehensive primer on Shafii Fiqh covering all chapters of Islamic jurisprudence.",
-    descriptionAr: "مَتْنٌ شَامِلٌ فِي الفِقْهِ الشَّافِعِيِّ يُغَطِّي جَمِيعَ أَبْوَابِ الفِقْهِ الإِسْلَامِيِّ.",
-    totalDuration: "20h 30m",
-    totalChapters: 20,
-    hasChapters: true,
-    chapters: abuShujaChapters,
-    scholar: "Various Scholars",
-    scholarAr: "عُلَمَاءُ مُتَعَدِّدُونَ",
-    source: "archive.org",
-  },
 ];
 
 // Helper functions
@@ -503,17 +658,17 @@ export function getMatnById(id: string): Matn | undefined {
 
 export const scholars = [
   {
-    id: "fawzan",
-    name: "Sheikh Salih al-Fawzan",
-    nameAr: "الشَّيْخُ صَالِحُ بْنُ فَوْزَانَ الفَوْزَانُ",
-    bio: "Member of the Senior Scholars Committee, Saudi Arabia",
-    texts: 4,
+    id: "various-reciters",
+    name: "Various Arabic Reciters",
+    nameAr: "قُرَّاءٌ عَرَبٌ مُتَعَدِّدُونَ",
+    bio: "Arabic text reciters preserving the authentic pronunciation of classical texts",
+    texts: 5,
   },
   {
-    id: "uthaymin",
-    name: "Sheikh Muhammad ibn Salih al-Uthaymin",
-    nameAr: "الشَّيْخُ مُحَمَّدُ بْنُ صَالِحٍ العُثَيْمِينُ",
-    bio: "Renowned scholar known for his clear explanations (1347-1421 AH)",
-    texts: 3,
+    id: "abu-malik",
+    name: "Abu Malik Ibn Abd'Azeez",
+    nameAr: "أَبُو مَالِكٍ ابْنُ عَبْدِ العَزِيزِ",
+    bio: "Known for clear hadith recitations with proper pronunciation",
+    texts: 1,
   },
 ];

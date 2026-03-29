@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -15,6 +15,7 @@ import {
   Library,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useAudioStore } from "@/stores/audio-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +33,7 @@ const emptySubscribe = () => () => {};
 
 export function Navbar({ onMenuClick }: NavbarProps) {
   const { theme, setTheme } = useTheme();
-  const [searchQuery, setSearchQuery] = useState("");
+  const { searchQuery, setSearchQuery } = useAudioStore();
 
   const isClient = useSyncExternalStore(
     emptySubscribe,
@@ -79,7 +80,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
             <Input
               type="text"
-              placeholder="ابحث عن متن أو كتاب..."
+              placeholder="ابْحَثْ عَنْ مَتْنٍ أَوْ كِتَابٍ..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pr-10 pl-4 bg-[#f8fafc] dark:bg-[#0f172a] border-[#e2e8f0] dark:border-[#334155] focus:border-[#d4af37] dark:focus:border-[#d4af37] text-[#0f172a] dark:text-white placeholder:text-[#94a3b8] arabic-text"
